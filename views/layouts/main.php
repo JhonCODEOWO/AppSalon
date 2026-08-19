@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/build/main.css">
+</head>
+<body>
+    <div>
+        <div>
+            <img src="" alt="">
+        </div>
+        <div>
+            <?php echo $content ?>
+        </div>
+    </div>
+</body>
+<script src="/build/main.js"></script>
+</html>
