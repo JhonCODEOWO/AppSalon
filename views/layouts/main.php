@@ -6,10 +6,10 @@
     <title>Document</title>
     <link rel="stylesheet" href="/build/main.css">
 </head>
-<body>
-    <div>
+<body class="bg-black text-white">
+    <div class="flex flex-col md:flex-row">
         <div>
-            <img src="" alt="">
+            <img src="/1.jpg" alt="">
         </div>
         <div>
             <?php echo $content ?>
