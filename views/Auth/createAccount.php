@@ -1,3 +1,3 @@
 <form action="" method="post">
-    <h1>Crear cuenta</h1>
+    <h1 class="text-center">Crear cuenta</h1>
 </form>

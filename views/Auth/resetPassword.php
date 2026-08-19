@@ -1,3 +1,3 @@
 <form action="" method="post">
-    <h1>Restablece tu contraseña</h1>
+    <h1 class="text-center">Restablece tu contraseña</h1>
 </form>

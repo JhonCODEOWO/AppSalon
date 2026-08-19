@@ -1,4 +1,3 @@
 <form action="" method="post">
-    <h1>Recuperar contraseña</h1>
-
+    <h1 class="text-center">Recuperar contraseña</h1>
 </form>

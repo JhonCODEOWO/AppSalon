@@ -11,7 +11,7 @@
         <div>
             <img src="/1.jpg" alt="">
         </div>
-        <div>
+        <div class="p-3">
             <?php echo $content ?>
         </div>
     </div>
