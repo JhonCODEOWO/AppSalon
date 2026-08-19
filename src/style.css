@@ -1,2 +1,6 @@
 @import "./css/normalize.css";
 @import "tailwindcss";
+
+h1{
+    @apply font-bold;
+}
