@@ -2,7 +2,9 @@
 @import "tailwindcss";
 
 @theme {
-    --color-success: #15db91;
+    --color-content-main: #2c2c2c;
+    --color-text-main: #fff;
+    --color-success: #00a636;
     --color-error: #dd1313;
     --color-warning: #eae406;
     --color-info: #15c5e3;
@@ -18,10 +20,17 @@ h1{
 }
 
 .input-fieldset input {
+    background-color: var(--color-content-main);
+    color: var(--color-text-main);
     width: 100%;
     outline: none;
     border-radius: 3px;
     padding: 4px;
+}
+
+.input-fieldset input::placeholder {
+    color: var(--color-text-main);
+    opacity: .8;
 }
 
 .button {
