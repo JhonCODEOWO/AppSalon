@@ -22,7 +22,11 @@ class AuthController {
     }
 
     public function forgotPassword(){
-
+        view(
+            "Auth/forgotPassword",
+            [],
+            "layouts/main"
+        );
     }
 
     public function sentMail(Request $req){
