@@ -1,6 +1,49 @@
 @import "./css/normalize.css";
 @import "tailwindcss";
 
+@theme {
+    --color-success: #15db91;
+    --color-error: #dd1313;
+    --color-warning: #eae406;
+    --color-info: #15c5e3;
+}
+
 h1{
     @apply font-bold;
+}
+
+.input-fieldset{
+    width: 100%;
+    padding: 7px 0;
+}
+
+.input-fieldset input {
+    width: 100%;
+    outline: none;
+    border-radius: 3px;
+    padding: 4px;
+}
+
+.button {
+    padding: .9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+}
+
+.button.button-success {
+    background-color: var(--color-success);
+}
+.button.button-error {
+    background-color: var(--color-error);
+}
+.button.button-warning {
+    background-color: var(--color-warning);
+}
+.button.button-info {
+    background-color: var(--color-info);
+}
+
+a:hover{
+    text-decoration: underline;
 }
