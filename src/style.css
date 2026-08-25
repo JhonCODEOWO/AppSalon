@@ -6,7 +6,7 @@
     --color-text-main: #fff;
     --color-success: #00a636;
     --color-error: #dd1313;
-    --color-warning: #eae406;
+    --color-warning: #dfda00;
     --color-info: #15c5e3;
 }
 
@@ -48,6 +48,7 @@ h1{
 }
 .button.button-warning {
     background-color: var(--color-warning);
+    color: black;
 }
 .button.button-info {
     background-color: var(--color-info);
