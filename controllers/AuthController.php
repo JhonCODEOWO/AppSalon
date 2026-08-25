@@ -38,7 +38,11 @@ class AuthController {
     }
 
     public function create(){
-        
+        view(
+            "Auth/createAccount",
+            [],
+            "layouts/main"
+        );
     }
 
     public function store(Request $req){
