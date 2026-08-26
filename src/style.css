@@ -19,13 +19,18 @@ h1{
     padding: 7px 0;
 }
 
+.input-fieldset legend {
+    text-align: start;
+    font-weight: lighter;
+}
+
 .input-fieldset input {
     background-color: var(--color-content-main);
     color: var(--color-text-main);
     width: 100%;
     outline: none;
     border-radius: 3px;
-    padding: 4px;
+    padding: 10px;
 }
 
 .input-fieldset input::placeholder {
