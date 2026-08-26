@@ -3,8 +3,8 @@
 namespace Models;
 
 class User extends ActiveRecord {
-    protected static $table = 'Users';
-    protected static $columns = [
+    protected static string $table = 'Users';
+    protected static array $columns = [
         'name', 
         'last_name', 
         'email', 
