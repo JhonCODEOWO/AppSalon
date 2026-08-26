@@ -1,4 +1,4 @@
-<form action="/createAccount" method="post">
+<form action="/create-account" method="post">
     <h1 class="text-center">Crear cuenta</h1>
     <p>Llena correctamente los campos para crear una cuenta.</p>
 
@@ -9,7 +9,13 @@
             name="nombre" 
             id="nombre"
             placeholder="Tu nombre"
+            value="<?php echo arrayFrom($old ?? null, 'nombre') ?>"
         >
+        <?php if (isset($errors)):?>
+            <p class="error">
+                <?php echo $errors->getFrom('nombre') ?>
+            </p>
+        <?php endif?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend for="apellido">Apellido(s)</legend>
@@ -18,7 +24,13 @@
             name="apellido" 
             id="apellido"
             placeholder="Tu(s) apellido(s)"
+            value="<?php echo arrayFrom($old ?? null, 'apellido') ?>"
         >
+        <?php if (isset($errors)):?>
+            <p class="error">
+                <?php echo $errors->getFrom('apellido') ?>
+            </p>
+        <?php endif?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend for="telefono">Teléfono</legend>
@@ -27,7 +39,13 @@
             name="telefono" 
             id="telefono"
             placeholder="Escribe un número de teléfono activo y válido."
+            value="<?php echo arrayFrom($old ?? null, 'telefono') ?>"
         >
+        <?php if (isset($errors)):?>
+            <p class="error">
+                <?php echo $errors->getFrom('telefono') ?>
+            </p>
+        <?php endif?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend for="email">Correo electrónico</legend>
@@ -36,7 +54,13 @@
             name="email" 
             id="email"
             placeholder="Correo electrónico válido y activo."
+            value="<?php echo arrayFrom($old ?? null, 'email') ?>"
         >
+        <?php if (isset($errors)):?>
+            <p class="error">
+                <?php echo $errors->getFrom('email') ?>
+            </p>
+        <?php endif?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend for="password">Contraseña</legend>
@@ -45,7 +69,13 @@
             name="password" 
             id="password"
             placeholder="Contraseña para la cuenta."
+            value="<?php echo arrayFrom($old ?? null, 'password') ?>"
         >
+        <?php if (isset($errors)):?>
+            <p class="error">
+                <?php echo $errors->getFrom('password') ?>
+            </p>
+        <?php endif?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend for="password_confirmation">Repite tu contraseña</legend>
@@ -55,6 +85,11 @@
             id="password_confirmation"
             placeholder="Escribe tu contraseña nuevamente para confirmarla."
         >
+        <?php if (isset($errors)):?>
+            <p class="error">
+                <?php echo $errors->getFrom('password_confirmation') ?>
+            </p>
+        <?php endif?>
     </fieldset>
 
     <button 
