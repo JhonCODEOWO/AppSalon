@@ -2,6 +2,9 @@
 
 namespace Controllers;
 
+use Core\JustArray\JustArray;
+use Core\Validator;
+use Models\User;
 use Routes\Request;
 
 class AuthController {
@@ -49,7 +52,56 @@ class AuthController {
         );
     }
 
+    /**
+     * Create a account action
+     */
     public function store(Request $req){
+        $body = $req->getBody([
+            "admin" => 0,
+            "confirmed" => 0
+        ]);
 
+        $validator = new Validator(
+            $body,
+            [
+                "nombre" => "required",
+                "apellido" => "required",
+                "telefono" => "required",
+                "email" => "required|unique:users,email",
+                "password" => "required|minLength:8",
+                "password_confirmation" => "required|minLength:8|confirmed:password",
+            ]
+        );
+
+        $errorsBag = $validator->validate();
+        
+        if($errorsBag->hasErrors()){
+            view(
+                "Auth/createAccount",
+                [
+                    "errors" => $errorsBag,
+                    "old" => $body,
+                ],
+                "layouts/main"
+            );
+            exit;
+        };
+        
+        $user = new User([
+            "name" => 
+                JustArray::find($body, 'nombre'),
+            "last_name" => 
+                JustArray::find($body, 'apellido'),
+            "phone_number" => 
+                JustArray::find($body, 'telefono'),
+            "password" => 
+                password_hash(JustArray::find($body, 'password'), PASSWORD_BCRYPT),
+            "admin" => 
+                JustArray::find($body, 'admin'),
+            "email" => 
+                JustArray::find($body, 'email')
+        ]);
+
+        redirectTo("/login");
     }
 }
