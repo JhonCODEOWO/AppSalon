@@ -3,7 +3,9 @@
 namespace Controllers;
 
 use Core\JustArray\JustArray;
+use Core\Mailer\Mailer;
 use Core\Validator;
+use Exception;
 use Models\User;
 use Routes\Request;
 
@@ -99,9 +101,33 @@ class AuthController {
             "admin" => 
                 JustArray::find($body, 'admin'),
             "email" => 
-                JustArray::find($body, 'email')
+                JustArray::find($body, 'email'),
+            "token" =>
+                uniqid()
         ]);
 
-        redirectTo("/login");
+        $mailer = new Mailer();
+        $mailer->subject("Account confirmation");
+        $mailer->to([$user->email]);
+        $mailer->useTemplate(
+            '/confirm_account',
+            [
+                "username" => $user->name,
+                "token" => $user->token,
+            ]
+        );
+
+        $mailer->send();
+        $user->save();
+
+        redirectTo('/account-created');
+    }
+
+    public function accountCreated(){
+        view('Auth/accountCreatedConfirm', []);
+    }
+
+    public function confirm(Request $req){
+        debug($req->getUrlParamValue('token'));
     }
 }
