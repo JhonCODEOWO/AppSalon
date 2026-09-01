@@ -48,6 +48,14 @@ $router->post(
     "/create-account",
     [AuthController::class, 'store']
 );
+$router->get(
+    "account-created",
+    [AuthController::class, 'accountCreated'],
+);
+$router->get(
+    "/confirm-account/{token}",
+    [AuthController::class, 'confirm']
+);
 
 //Handling the incoming request.
 $router->checkRoutes();
