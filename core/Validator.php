@@ -155,6 +155,46 @@ class Validator {
     public function min(mixed $input, mixed $minValue): bool{
         return ($input >= $minValue);
     }
+
+
+    /**
+     *  Checks if a value already exists in DB.
+     *
+     * @param mixed $inputValue Value from a field
+     * @param mixed $params A string with `tableName,columnToCheck,ignoreColumn,ignoreValue` syntax.
+     * @return bool
+     */
+    public function unique(mixed $inputValue, mixed $params): bool{
+        $params = explode(',', $params);
+        [$tableName, $columnToCheck, $ignoreColumn,$ignoreValue] = array_pad($params, 4, null);
+
+        $db = Database::getDb();
+
+        $sqlSentence = "SELECT * FROM $tableName WHERE $columnToCheck = ?";
+        
+        //TODO: Check inputValue type and ignoreValue to append them
+        $types = "s";
+
+        if ($ignoreValue != null && $ignoreColumn != null) {
+            $sqlSentence .= " AND $ignoreColumn != ?";
+            $types .= "s";
+        }
+
+        $sqlSentence .= " LIMIT 1";
+        
+        $stmt = $db->prepare($sqlSentence);
+
+        //Execute operations
+        ($ignoreValue != null && $ignoreColumn != null)?
+            $stmt->bind_param($types, $inputValue, $ignoreValue)
+            :
+            $stmt->bind_param($types, $inputValue);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return ($result->num_rows == 0);
+    }
     
     /**
      * minLength
@@ -209,9 +249,9 @@ class Validator {
      *  Pick a error message from the current ValidationErrors.php file and returns the formatted string
      *  with field name and the needed value.
      *
-     * @param  string $field
-     * @param  string $rule
-     * @param  string | null $paramVal
+     * @param  string $field The field string to show in the error message
+     * @param  string $rule The rule to pick a rule message from dictionary.
+     * @param  string | null $paramVal Param val value to show the rule to respect
      * @return string The error validation rule.
      */
     private function errorValidation(string $field, string $rule, string | null $paramVal): string{
