@@ -1,6 +1,8 @@
 <?php
 
 namespace Models;
+
+use Core\JustArray\JustArray;
 use mysqli;
 use ReflectionProperty;
 
@@ -41,40 +43,68 @@ class ActiveRecord {
      */
     public function rehydrate(array $data){
         foreach ($data as $key => $value) {
-            if(!property_exists($this, $key) || is_null($value)) continue;
+            if(!property_exists($this, $key)) continue;
 
             $castedValue = $this->castProperty($key, $value);
 
-            if($castedValue === false || $castedValue === null) continue;
+            if(!$castedValue['success']) continue;
 
-            $this->$key = $castedValue;
+            $this->$key = $castedValue['value'];
         }
     }
 
-    protected function castProperty(string $key, mixed $value) : mixed {
-        $property = new ReflectionProperty($this, $key);
-            $type = $property->getType()?->getName();
-            $filtered = false;
+    protected function castProperty(string $key, mixed $value) : array {
+            $property = new ReflectionProperty($this, $key);
+            $type = $property->getType();
+            $allowsNull = $type->allowsNull();
+            
+            $result = [
+                "success" => false,
+                "value" => null,
+            ];
 
-            switch ($type) {
+            if(gettype($value) == 'NULL' && $allowsNull) {
+                JustArray::add($result, true, "success");
+                JustArray::add($result, null, "value");
+
+                return $result;
+            }
+
+            switch ($type->getName()) {
                 case 'string':
-                    $filtered = (string) $value;
+                    $result['value'] = (string) $value;
+                    $result['success'] = true;
                     break;
                 case 'int':
                     $filtered = filter_var($value, FILTER_VALIDATE_INT);
+                    
+                    if($filtered != false){
+                        $result['value'] = $filtered;
+                        $result['success'] = true;
+                    };
                     break;
                 case 'float':
                     $filtered = filter_var($value, FILTER_VALIDATE_FLOAT);
+                    
+                    if($filtered != false){
+                        $result['value'] = $filtered;
+                        $result['success'] = true;
+                    };
                     break;
                 case 'bool':
                     $filtered = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                    
+                    if($filtered != NULL){
+                        $result['value'] = $filtered;
+                        $result['success'] = true;
+                    };
                     break;
                 default:
                     # code...
                     break;
             }
 
-            return $filtered;
+            return $result;
     }
 
 
@@ -83,7 +113,8 @@ class ActiveRecord {
      *
      * @return static | null The element in DB successfully updated null otherwise
      */
-    public function update(): static | null{
+    public function update(array $dataToUpdate): static | null{
+        $this->rehydrate($dataToUpdate);
         $attributes = $this->sanitizeAtributos();
         $values = [];
 
@@ -135,7 +166,7 @@ class ActiveRecord {
 
         foreach (static::$columns as $column) {
             if($column === static::$idName) continue;
-            $attributes[$column] = $this->$column;
+            $attributes[$column] = $this->$column; //[column] => propertyValue
         }
 
         return $attributes;
@@ -194,6 +225,19 @@ class ActiveRecord {
         $result = self::execQuery($query);
 
         return $result[0];
+    }
+
+    /**
+     * Get a specific record by a condition
+     * 
+     * @TODO Implement dynamic comparisons.
+     */
+    public static function where(string $column, string $value): static | null {
+        $query = "SELECT * FROM " . static::$table .  " WHERE $column = '$value'";
+        
+        $result = self::execQuery($query);
+
+        return $result[0] ?? null;
     }
 
     public static function execQuery(string $query): array{
