@@ -139,18 +139,28 @@ class AuthController {
         ]);
         $errors = $validator->validate();
 
-        if(!$errors->hasErrors()){
-            $user = User::where('token', JustArray::find($body, 'token'));
-            if($user === null) $errors->add("Not exists a user to confirm with the requested token", "token");
-
-            if(!$errors->hasErrors()){
-                $user->update([
-                    "confirmed" => 1,
-                    "token" => null,
-                ]);
-            }
+        if($errors->hasErrors()){
+            view(
+                'Auth/confirmedAccount', 
+                [
+                    "errors" => $errors
+                ],
+                'layouts/main'
+            );
+            exit;
         }
 
+        $user = User::where('token', JustArray::find($body, 'token'));
+
+        if($user === null) $errors->add("Not exists a user to confirm with the requested token", "token");
+
+        if(!$errors->hasErrors()){
+            $user->update([
+                "confirmed" => 1,
+                "token" => null,
+            ]);
+        }
+        
         view(
             'Auth/confirmedAccount', 
             [
