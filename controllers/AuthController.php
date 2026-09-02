@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Core\Errors;
 use Core\JustArray\JustArray;
 use Core\Mailer\Mailer;
 use Core\Validator;
@@ -128,6 +129,34 @@ class AuthController {
     }
 
     public function confirm(Request $req){
-        debug($req->getUrlParamValue('token'));
+        $user = null;
+        $body = [
+            "token" => safe($req->getUrlParamValue('token')),
+        ];
+
+        $validator = new Validator($body, [
+            "token" => 'required|minLength:13',
+        ]);
+        $errors = $validator->validate();
+
+        if(!$errors->hasErrors()){
+            $user = User::where('token', JustArray::find($body, 'token'));
+            if($user === null) $errors->add("Not exists a user to confirm with the requested token", "token");
+
+            if(!$errors->hasErrors()){
+                $user->update([
+                    "confirmed" => 1,
+                    "token" => null,
+                ]);
+            }
+        }
+
+        view(
+            'Auth/confirmedAccount', 
+            [
+                "errors" => $errors
+            ],
+            'layouts/main'
+        );
     }
 }
