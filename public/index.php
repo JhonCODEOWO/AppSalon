@@ -31,11 +31,11 @@ $router->post(
     [AuthController::class, 'sendResetMail']
 );
 $router->get(
-    "/reset-password/:token",
+    "/reset-password/{token}",
     [AuthController::class, 'reset']
 );
 $router->post(
-    "/reset-password/:token",
+    "/reset-password/{token}",
     [AuthController::class, 'resetPassword']
 );
 
