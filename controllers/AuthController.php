@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Core\Auth;
+use Core\Database;
 use Core\Errors;
 use Core\JustArray\JustArray;
 use Core\Mailer\Mailer;
@@ -20,11 +22,12 @@ class AuthController {
     }
 
     public function loginUser(Request $req){
+        $user = null;
         $body = $req->getBody();
         $validator = new Validator(
             $body,
             [
-                "email" => "required|email",
+                "email" => "required|email|exists:users,email",
                 "password" => "required|minLength:8",
             ]
         );
@@ -32,8 +35,24 @@ class AuthController {
         $errors = $validator->validate();
 
         if(!$errors->hasErrors()){
-            redirectTo('/');
+            $user = Auth::attempt(
+                JustArray::find($body, 'email'),
+                JustArray::find($body, 'password')
+            );
         }
+
+        if(!$this->isUserConfirmed($user) && $user != null){
+            $errors->add(
+                "The email associated to this account is not confirmed.",
+                "email"
+            );
+        }
+
+        //Authenticate and redirect
+        if(!$errors->hasErrors()) {
+
+            redirectTo('/');
+        };
 
         view(
             'Auth/login',
@@ -190,5 +209,17 @@ class AuthController {
             ],
             'layouts/main'
         );
+    }
+
+    /**
+     *  Checks if a instance of user has true value in confirmed property.
+     *
+     * @param ?User $user
+     * @return bool
+     */
+    private function isUserConfirmed(?User $user): bool{
+        if($user === null) return false;
+
+        return ($user->confirmed === true);
     }
 }
