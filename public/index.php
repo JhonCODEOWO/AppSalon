@@ -28,7 +28,7 @@ $router->get(
 );
 $router->post(
     "/forgot-password",
-    [AuthController::class, 'sendMail']
+    [AuthController::class, 'sendResetMail']
 );
 $router->get(
     "/reset-password/:token",
