@@ -9,7 +9,11 @@
             name="email" 
             id="email"
             placeholder="Escribe el correo de tu cuenta"
+            value="<?php echo arrayFrom($old, 'email') ?>"
         >
+        <?php if(isset($errors)) :?>
+            <p class="text-start error"><?php echo $errors->getFrom('email') ?></p>
+        <?php endif?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend for="password">Contraseña</legend>
@@ -19,6 +23,9 @@
             id="password"
             placeholder="Tu contraseña"
         >
+        <?php if(isset($errors)) :?>
+            <p class="text-start error"><?php echo $errors->getFrom('password') ?></p>
+        <?php endif?>
     </fieldset>
     <button 
         type="submit"
