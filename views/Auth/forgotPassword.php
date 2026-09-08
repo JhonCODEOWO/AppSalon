@@ -1,4 +1,4 @@
-<form action="/forgotPassword" method="post">
+<form action="/forgo-password" method="post">
     <h1 class="text-center">Recuperar contraseña</h1>
     <p>Escribe tu correo, nosotros nos encargaremos de enviarte un email con los siguientes pasos.</p>
 
