@@ -9,7 +9,9 @@
             name="email" 
             id="email"
             placeholder="Escribe el correo de tu cuenta"
-            value="<?php echo arrayFrom($old, 'email') ?>"
+            value="
+                    <?php echo arrayFrom($old ?? null, 'email') ?>
+                "
         >
         <?php if(isset($errors)) :?>
             <p class="text-start error"><?php echo $errors->getFrom('email') ?></p>
