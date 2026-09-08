@@ -195,6 +195,19 @@ class Validator {
 
         return ($result->num_rows == 0);
     }
+
+    /**
+     *  Checks if the inputValue has a already record in the table checking if the inputValue match in the column specified.
+     *
+     * @param mixed $inputValue The input value.
+     * @param mixed $params A array with expected $tableName and $columnToCheck values.
+     * @return bool `True` if exists a record in DB `false` otherwise.
+     */
+    public function exists(mixed $inputValue, mixed $params){
+        [$tableName, $columnToCheck] = explode(',',$params);
+        
+        return $this->checkIfExists($tableName, $columnToCheck, safe($inputValue));
+    }
     
     /**
      * minLength
@@ -280,5 +293,38 @@ class Validator {
 
     public function invalid(): bool {
         return $this->errors->hasErrors();
+    }
+
+
+    private function checkIfExists(string $tableName, string $columnToCheckIn, mixed $valueToCheck, array $opts = []): bool{
+        [$ignoreValue, $ignoreColumn] = array_pad($opts, 2, null);
+        $db = Database::getDb();
+
+        $sqlSentence = "SELECT * FROM $tableName WHERE $columnToCheckIn = ?";
+        
+        //TODO: Check inputValue type and ignoreValue to append them
+        $types = "s";
+
+        if ($ignoreValue != null && $ignoreColumn != null) {
+            $sqlSentence .= " AND $ignoreColumn != ?";
+            $types .= "s";
+        }
+
+        $sqlSentence .= " LIMIT 1";
+        
+        $stmt = $db->prepare($sqlSentence);
+
+        //Execute operations
+        ($ignoreValue != null && $ignoreColumn != null)?
+            $stmt->bind_param($types, $valueToCheck, $ignoreValue)
+            :
+            $stmt->bind_param($types, $valueToCheck);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if(!$result) return false;
+
+        return ($result->num_rows === 1);
     }
 }
