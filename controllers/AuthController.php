@@ -50,8 +50,17 @@ class AuthController {
 
         //Authenticate and redirect
         if(!$errors->hasErrors()) {
-
-            redirectTo('/');
+            Auth::login(
+                [
+                    "id" => $user->id,
+                    "name" => $user->name,
+                ]
+            );
+            ($user->admin == true)
+                ?
+                redirectTo('/panel')
+                :
+                redirectTo('/');
         };
 
         view(
