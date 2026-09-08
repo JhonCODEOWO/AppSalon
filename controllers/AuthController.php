@@ -20,7 +20,29 @@ class AuthController {
     }
 
     public function loginUser(Request $req){
+        $body = $req->getBody();
+        $validator = new Validator(
+            $body,
+            [
+                "email" => "required|email",
+                "password" => "required|minLength:8",
+            ]
+        );
 
+        $errors = $validator->validate();
+
+        if(!$errors->hasErrors()){
+            redirectTo('/');
+        }
+
+        view(
+            'Auth/login',
+            [
+                "errors" => $errors,
+                "old" => $body,
+            ],
+            "layouts/main"
+        );
     }
 
     public function logout(Request $req){
