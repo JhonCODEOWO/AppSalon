@@ -85,8 +85,70 @@ class AuthController {
         );
     }
 
-    public function sentMail(Request $req){
+    public function sendResetMail(Request $req){
+        $body = $req->getBody();
+        $validator = new Validator(
+            $body,
+            [
+                "email" => 'required|exists:users,email|email'
+            ]
+        );
 
+        $errors = $validator->validate();
+
+        if($errors->hasErrors()){
+            view(
+                "Auth/forgotPassword",
+                [
+                    "errors" => $errors
+                ],
+                "layouts/main"
+            );
+            exit;
+        }
+
+        $user = User::where('email', JustArray::find($body, 'email'));
+
+        if(!$this->isUserConfirmed($user) || $user === null) {
+            $errors->add("It seems a account with this email is not confirmed or not exists.", "email");
+        
+            view(
+                "Auth/forgotPassword",
+                [
+                    "errors" => $errors
+                ],
+                "layouts/main"
+            );
+            exit;
+        }
+
+        $token = uniqid();
+
+        $mailer = new Mailer();
+        $mailer->from();
+        $mailer->to([$user->email]);
+        $mailer->subject('Reset password');
+        $mailer->useTemplate(
+            'missing_password',
+            [
+                "token" => $token,
+                "host" => $_ENV['APP_HOST'],
+            ]
+        );
+
+        try {
+            $mailer->send();
+            $user->update(["token" => $token]);
+            view(
+                "Auth/forgotPassword",
+                [
+                    "success" => "Correo enviado exitosamente, revisa tu correo para continuar y restaurar tu contraseña."
+                ],
+                "layouts/main"
+            );
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+        }
     }
 
     public function reset(Request $req){
