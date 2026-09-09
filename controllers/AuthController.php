@@ -152,11 +152,33 @@ class AuthController {
     }
 
     public function reset(Request $req){
-
+        $token = $req->getUrlParamValue('token') ?? "";
+        view(
+            "Auth/resetPassword",
+            [
+                "token" => $token,
+            ],
+            "layouts/main"
+        );
     }
 
     public function resetPassword(Request $req){
+        $body = $req->getBody(["token" => ""]);
 
+        $validator = new Validator(
+            $body,
+            [
+                "password" => 
+                    "required|minLength:8",
+                "password_confirmation" =>
+                    "required|minLength:8|confirmed:password",
+                "token" => "required|exists:users,token"
+            ]
+        );
+
+        $errors = $validator->validate();
+
+        //TODO: Redirect to get route with errors in session flash data.
     }
 
     public function create(){
