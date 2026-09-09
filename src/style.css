@@ -19,6 +19,15 @@ h1{
     color: var(--color-error)
 }
 
+.error.alert{
+    padding: 1rem;
+    border-radius: .5px;
+    font-size: medium;
+    font-weight: bold;
+    color: var(--color-text-main);
+    background-color: var(--color-error);
+}
+
 .success {
     font-size: small;
     color: var(--color-success)
@@ -46,6 +55,11 @@ h1{
 .input-fieldset input::placeholder {
     color: var(--color-text-main);
     opacity: .8;
+}
+
+.input-fieldset .error {
+    font-size: small;
+    color: var(--color-error)
 }
 
 .button {
