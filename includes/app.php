@@ -3,8 +3,8 @@
 require 'funciones.php';
 require __DIR__ . '/../vendor/autoload.php';
 
-use Core\Auth;
 use Core\Database;
+use Core\Session;
 use Dotenv\Dotenv;
 use Models\ActiveRecord;
 
@@ -15,7 +15,7 @@ $dotenv->required('DB_PASSWORD');
 $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME'])->notEmpty();
 $dotenv->required('PRODUCTION')->isBoolean();
 
-Auth::start();
+Session::start();
 
 //Set DB connection globally in the parent class.
 Database::conectarDb();
