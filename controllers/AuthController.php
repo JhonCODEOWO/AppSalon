@@ -45,7 +45,8 @@ class AuthController {
         if(!$this->isUserConfirmed($user) && $user != null){
             $errors->add(
                 "The email associated to this account is not confirmed.",
-                "email"
+                "email",
+                true
             );
         }
 
@@ -103,7 +104,7 @@ class AuthController {
         $user = User::where('email', JustArray::find($body, 'email'));
 
         if(!$this->isUserConfirmed($user) || $user === null) {
-            $errors->add("It seems a account with this email is not confirmed or not exists.", "email");
+            $errors->add("It seems a account with this email is not confirmed or not exists.", "email", true);
         
             view(
                 "Auth/forgotPassword",
@@ -205,17 +206,7 @@ class AuthController {
 
         $errorsBag = $validator->validate();
         
-        if($errorsBag->hasErrors()){
-            view(
-                "Auth/createAccount",
-                [
-                    "errors" => $errorsBag,
-                    "old" => $body,
-                ],
-                "layouts/main"
-            );
-            exit;
-        };
+        if($errorsBag->hasErrors()) redirectTo("/create-account");
         
         $user = new User([
             "name" => 
@@ -260,41 +251,40 @@ class AuthController {
         $body = [
             "token" => safe($req->getUrlParamValue('token')),
         ];
+        $token = JustArray::find($body, "token");
+
+        view(
+            "Auth/confirmAccount",
+            [
+                "token" => $token,
+            ],
+            "layouts/main"
+        );
+    }
+
+    public function confirmAccount(Request $req){
+        $body = $req->getBody();
+        $token = JustArray::find($body, "token");
 
         $validator = new Validator($body, [
             "token" => 'required|minLength:13',
         ]);
         $errors = $validator->validate();
 
-        if($errors->hasErrors()){
-            view(
-                'Auth/confirmedAccount', 
-                [
-                    "errors" => $errors
-                ],
-                'layouts/main'
-            );
-            exit;
-        }
+        if($errors->hasErrors()) redirectTo("/confirm-account/$token");
 
-        $user = User::where('token', JustArray::find($body, 'token'));
+        $user = User::where('token', $token);
 
-        if($user === null) $errors->add("Not exists a user to confirm with the requested token", "token");
+        if($user === null) $errors->add("Not exists a user to confirm with the requested token", "token", true);
 
-        if(!$errors->hasErrors()){
-            $user->update([
-                "confirmed" => 1,
-                "token" => null,
-            ]);
-        }
-        
-        view(
-            'Auth/confirmedAccount', 
-            [
-                "errors" => $errors
-            ],
-            'layouts/main'
-        );
+        if($errors->hasErrors()) redirectTo("/confirm-account/$token");
+
+        $user->update([
+            "confirmed" => 1,
+            "token" => null,
+        ]);
+
+        redirectTo('Auth/confirmedAccount');
     }
 
     /**

@@ -35,7 +35,7 @@ $router->get(
     [AuthController::class, 'reset']
 );
 $router->post(
-    "/reset-password/{token}",
+    "/reset-password",
     [AuthController::class, 'resetPassword']
 );
 
@@ -55,6 +55,10 @@ $router->get(
 $router->get(
     "/confirm-account/{token}",
     [AuthController::class, 'confirm']
+);
+$router->post(
+    "/confirm-account",
+    [AuthController::class, 'confirmAccount']
 );
 
 //Handling the incoming request.
