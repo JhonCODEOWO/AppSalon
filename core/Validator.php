@@ -251,7 +251,7 @@ class Validator {
                 $result = $this->$ruleFnName($inputValue, $ruleParam);
 
                 if(!$result){
-                    $this->errors->add($this->errorValidation($field, $ruleFnName, $ruleParam), $field);
+                    $this->errors->add($this->errorValidation($field, $ruleFnName, $ruleParam), $field, true);
                 }
             }
         }
