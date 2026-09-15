@@ -7,6 +7,7 @@ use Core\Database;
 use Core\Errors;
 use Core\JustArray\JustArray;
 use Core\Mailer\Mailer;
+use Core\Session;
 use Core\Validator;
 use Exception;
 use Models\User;
@@ -48,29 +49,21 @@ class AuthController {
             );
         }
 
+        if($errors->hasErrors()) redirectTo("/login");
+        
         //Authenticate and redirect
-        if(!$errors->hasErrors()) {
-            Auth::login(
-                [
-                    "id" => $user->id,
-                    "name" => $user->name,
-                ]
-            );
-            ($user->admin == true)
-                ?
-                redirectTo('/panel')
-                :
-                redirectTo('/');
-        };
-
-        view(
-            'Auth/login',
+        Auth::login(
             [
-                "errors" => $errors,
-                "old" => $body,
-            ],
-            "layouts/main"
+                "id" => $user->id,
+                "name" => $user->name,
+            ]
         );
+
+        ($user->admin == true)
+            ?
+                redirectTo('/panel')
+            :
+                redirectTo('/');
     }
 
     public function logout(Request $req){
