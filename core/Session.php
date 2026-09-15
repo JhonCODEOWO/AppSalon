@@ -64,6 +64,17 @@ class Session {
     }
 
     /**
+     *  Appends a new value to the end of a array inside flash data.
+     *
+     * @param string $path
+     * @param mixed $value
+     * @return void
+     */
+    static function appendFlashArray(string $path, mixed $value){
+        JustArray::append($_SESSION, $value, "__flash.$path");
+    }
+
+    /**
      *  Moves __flash data to __prev inside $_SESSION which means every next request can use __prev data.
      *
      * @return boolean true if succeed false otherwise
@@ -90,6 +101,19 @@ class Session {
     static function getFlashData(string $path): mixed {
         try {
             return static::get("__flash.$path");
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
+    /**
+     *  Get flash date of the last request by dot path notation.
+     *
+     * @param string $path
+     * @return mixed
+     */
+    static function getPrevFlashData(string $path): mixed {
+        try {
+            return static::get("__prev.$path");
         } catch (\Throwable $th) {
             return null;
         }
