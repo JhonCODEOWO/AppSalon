@@ -15,9 +15,12 @@ use Routes\Request;
 
 class AuthController {
     public function login(Request $req){
+        $confirmedMessage = Session::getPrevFlashData('success') ?? null;
         view(
             'Auth/login', 
-            [],
+            [
+                "confirmedMessage" => $confirmedMessage,
+            ],
             'layouts/main'
         );
     }
@@ -81,6 +84,7 @@ class AuthController {
 
     public function sendResetMail(Request $req){
         $body = $req->getBody();
+
         $validator = new Validator(
             $body,
             [
@@ -90,31 +94,14 @@ class AuthController {
 
         $errors = $validator->validate();
 
-        if($errors->hasErrors()){
-            view(
-                "Auth/forgotPassword",
-                [
-                    "errors" => $errors
-                ],
-                "layouts/main"
-            );
-            exit;
-        }
+        if($errors->hasErrors()) redirectTo('/forgot-password');
 
         $user = User::where('email', JustArray::find($body, 'email'));
 
-        if(!$this->isUserConfirmed($user) || $user === null) {
+        if(!$this->isUserConfirmed($user) || $user === null) 
             $errors->add("It seems a account with this email is not confirmed or not exists.", "email", true);
-        
-            view(
-                "Auth/forgotPassword",
-                [
-                    "errors" => $errors
-                ],
-                "layouts/main"
-            );
-            exit;
-        }
+
+        if($errors->hasErrors()) redirectTo('forgot-password');
 
         $token = uniqid();
 
@@ -284,7 +271,8 @@ class AuthController {
             "token" => null,
         ]);
 
-        redirectTo('Auth/confirmedAccount');
+        Session::flash('success', "Account confirmed successfully, now you can login.");
+        redirectTo('/login');
     }
 
     /**
