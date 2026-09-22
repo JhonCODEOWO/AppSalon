@@ -124,3 +124,39 @@ header {
     background-color: var(--color-background-main);
     padding: 0 .5rem;
 }
+
+.tabs {
+    margin: 1rem 0;
+    padding: 1.5rem .5rem 0rem .5rem;
+    display: flex;
+    flex-direction: row;
+    column-gap: .2rem;
+    border: .5px solid var(--color-text-main);
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    overflow-x: auto;
+}
+
+.tabs button {
+    text-align: start;
+    padding: .5rem 3rem .4rem .3rem;
+    background-color: var(--color-content-main);
+    cursor: pointer;
+    clip-path: polygon(
+        0 0,
+        80% 0,
+        100% 100%,
+        0 100%
+    );
+}
+
+.tabs button:hover {
+    color: var(--color-background-main);
+    background-color: var(--color-text-main);
+}
+
+.tabs button.active {
+    color: var(--color-background-main);
+    background-color: var(--color-text-main);
+}
