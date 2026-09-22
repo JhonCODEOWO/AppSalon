@@ -19,18 +19,26 @@ h1{
     color: var(--color-error)
 }
 
-.error.alert{
+.success {
+    font-size: small;
+    color: var(--color-success)
+}
+
+.alert {
     padding: 1rem;
     border-radius: .5px;
     font-size: medium;
     font-weight: bold;
+}
+
+.error.alert{
     color: var(--color-text-main);
     background-color: var(--color-error);
 }
 
-.success {
-    font-size: small;
-    color: var(--color-success)
+.success.alert {
+    color: var(--color-text-main);
+    background-color: var(--color-success);
 }
 
 .input-fieldset{
