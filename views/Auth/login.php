@@ -2,6 +2,10 @@
     <p class="success alert"><?php echo $confirmedMessage ?></p>
 <?php endif ?>
 
+<?php if($errorMessage != null): ?>
+    <p class="error alert"><?php echo $errorMessage ?></p>
+<?php endif ?>
+
 <form action="/login" method="post" class="text-center">
     <h1 class="text-center">Iniciar sesión</h1>
     <p>Coloca tus credenciales para iniciar sesión.</p>
