@@ -1,5 +1,6 @@
 <?php
 
+use Controllers\AdminController;
 use Controllers\AuthController;
 use Core\JustArray\JustArray;
 use Routes\Router;
@@ -60,6 +61,10 @@ $router->post(
     "/confirm-account",
     [AuthController::class, 'confirmAccount']
 );
+
+//Admin routes
+$router->get("/panel", [AdminController::class, "index"]);
+$router->get("/createAppointment", [AdminController::class, "createAppointment"]);
 
 //Handling the incoming request.
 $router->checkRoutes();
