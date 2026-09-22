@@ -1,10 +1,12 @@
 <h1>Crear cita</h1>
-<p>Elige los servicios a continuación</p>
+<p>Agenda tu cita en 3 simples pasos.</p>
 
 
 <div id="steps">
     <div id="step-1">
         <h2>Servicios</h2>
+        <p>Elige los servicios deseados.</p>
+        <div id="services"></div>
     </div>
     
     <div id="step-2">
