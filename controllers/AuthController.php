@@ -16,10 +16,12 @@ use Routes\Request;
 class AuthController {
     public function login(Request $req){
         $confirmedMessage = Session::getPrevFlashData('success') ?? null;
+        $errorMessage = Session::getPrevFlashData('error') ?? null;
         view(
             'Auth/login', 
             [
                 "confirmedMessage" => $confirmedMessage,
+                "errorMessage" => $errorMessage,
             ],
             'layouts/main'
         );
@@ -43,6 +45,11 @@ class AuthController {
                 JustArray::find($body, 'email'),
                 JustArray::find($body, 'password')
             );
+        }
+
+        if($user === null) {
+            Session::flash("error", "The password is incorrect.");
+            redirectTo("/login");
         }
 
         if(!$this->isUserConfirmed($user) && $user != null){
@@ -144,6 +151,7 @@ class AuthController {
 
     public function resetPassword(Request $req){
         $body = $req->getBody(["token" => ""]);
+        $token = JustArray::find($body, "token");
 
         $validator = new Validator(
             $body,
@@ -158,7 +166,20 @@ class AuthController {
 
         $errors = $validator->validate();
 
-        //TODO: Redirect to get route with errors in session flash data.
+        if($errors->hasErrors()) redirectTo("/reset-password/$token");
+
+        $user = User::where('token', $token);
+        $password = JustArray::find($body, "password");
+
+        $newPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        $user->update([
+            "password" => $newPassword,
+            "token" => null,
+        ]);
+
+        Session::flash("success", "Your password has changed successfully, try login now.");
+        redirectTo("/login");
     }
 
     public function create(){
