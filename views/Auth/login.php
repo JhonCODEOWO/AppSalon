@@ -1,3 +1,7 @@
+<?php if($confirmedMessage != null): ?>
+    <p class="success alert"><?php echo $confirmedMessage ?></p>
+<?php endif ?>
+
 <form action="/login" method="post" class="text-center">
     <h1 class="text-center">Iniciar sesión</h1>
     <p>Coloca tus credenciales para iniciar sesión.</p>
