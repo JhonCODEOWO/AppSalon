@@ -2,6 +2,7 @@
 @import "tailwindcss";
 
 @theme {
+    --color-background-main: #000;
     --color-content-main: #2c2c2c;
     --color-text-main: #fff;
     --color-success: #00a636;
@@ -93,4 +94,18 @@ h1{
 
 a:hover{
     text-decoration: underline;
+}
+
+header {
+    font-size: medium;
+    font-weight: bold;
+    color: var(--color-text-main);
+    padding: 1rem 2rem;
+    background-color: var(--color-content-main);
+}
+
+.content {
+    color: var(--color-text-main);
+    background-color: var(--color-background-main);
+    padding: 0 .5rem;
 }
