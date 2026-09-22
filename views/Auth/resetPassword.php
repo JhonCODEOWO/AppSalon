@@ -1,7 +1,7 @@
 <form action="/reset-password" method="post">
-    <?php if(isset($errors)): ?>
+    <?php if(error('token') ?? null): ?>
         <p class="error alert">
-            <?php echo $errors->getFrom('token') ?>
+            <?php echo error('token') ?>
         </p>
     <?php endif ?>
     <h1 class="text-center">Restablece tu contraseña</h1>
@@ -10,18 +10,18 @@
     <fieldset class="input-fieldset">
         <legend>Nueva contraseña</legend>
         <input type="password" name="password" id="password" placeholder="Contraseña de 8 caracteres...">
-        <?php if(isset($errors)): ?>
+        <?php if(error('password') != null): ?>
             <p class="error">
-                <?php echo $errors->getFrom('password') ?>
+                <?php echo error('password') ?>
             </p>
         <?php endif ?>
     </fieldset>
     <fieldset class="input-fieldset">
         <legend>Repite la nueva contraseña</legend>
         <input type="password" name="password_confirmation" id="password" placeholder="Confirma tu nueva contraseña">
-        <?php if(isset($errors)): ?>
+        <?php if(error('password_confirmation') != null): ?>
             <p class="error">
-                <?php echo $errors->getFrom('password_confirmation') ?>
+                <?php echo error('password_confirmation') ?>
             </p>
         <?php endif ?>
     </fieldset>
