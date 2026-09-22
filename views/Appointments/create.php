@@ -3,6 +3,18 @@
 
 
 <div id="steps">
+    <nav class="tabs">
+        <button type="button" data-step="0">
+            Servicios
+        </button>
+        <button type="button" data-step="1">
+            Datos de la cita
+        </button>
+        <button type="button" data-step="2">
+            Confirmación
+        </button>
+    </nav>
+
     <div id="step-1">
         <h2>Servicios</h2>
         <p>Elige los servicios deseados.</p>
