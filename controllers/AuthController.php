@@ -75,9 +75,12 @@ class AuthController {
     }
 
     public function forgotPassword(){
+        $successMessage = Session::getPrevFlashData("success") ?? null;
         view(
             "Auth/forgotPassword",
-            [],
+            [
+                "successMessage" => $successMessage,
+            ],
             "layouts/main"
         );
     }
@@ -120,15 +123,11 @@ class AuthController {
         try {
             $mailer->send();
             $user->update(["token" => $token]);
-            view(
-                "Auth/forgotPassword",
-                [
-                    "success" => "Correo enviado exitosamente, revisa tu correo para continuar y restaurar tu contraseña."
-                ],
-                "layouts/main"
-            );
+            Session::flash("success", "A mail has already sent with instructions to continue");
+            redirectTo('/forgot-password');
         } catch (Exception $ex) {
-            echo $ex->getMessage();
+            $errors->add("A error occurred while we tried to send the mail, try again.", "mail-status");
+            redirectTo("/forgot-password");
         }
     }
 
