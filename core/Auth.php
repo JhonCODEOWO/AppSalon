@@ -63,6 +63,30 @@ class Auth {
         Session::unset("__auth");
     }
 
+    private static function getAuth(){
+        return Session::get('__auth');
+    }
+
+    /**
+     *  Try to return a instance of the user model from current $_SESSION[__auth] id value.
+     *
+     * @param string $modelClassName The classname of the model to retrieve.
+     * @return object|null a fresh instance of the model or null if there's nothing in current __auth $_SESSION.
+     */
+    public static function user(string $modelClassName): object | null{
+        $auth = static::getAuth();
+        if($auth === null) return null;
+        $user = new $modelClassName();
+
+        if(!method_exists($user, "find")) return null;
+
+        $id = JustArray::find($auth, "id") ?? null;
+
+        if($id === null) return null;
+
+        return $user->find($id);
+    }
+
     public static function authenticated(): bool {
         return isset($_SESSION['___auth']);
     }
