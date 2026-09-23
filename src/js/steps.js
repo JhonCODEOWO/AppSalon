@@ -41,6 +41,13 @@ export function steps() {
     }
 }
 
+/**
+ *  Manage button next and prev styles based on limits.
+ * @param {object} elements A object with prev and next keys which values are prev and next DOM buttons.
+ * @param {number} actualIndex The actual index value to check against limit
+ * @param {number} limit Total of elements to compare
+ * @returns {void}
+ */
 function managePagination(elements, actualIndex, limit){
     const {prev, next} = elements;
 
@@ -54,16 +61,30 @@ function managePagination(elements, actualIndex, limit){
     if(resultNext) elementNext.disabled = true;
 }
 
+/**
+ *  Checks if an element has reached its end or start bounds based.
+ * @param {Element} element Element to check
+ * @param {number} actualIndex
+ * @param {number} limit
+ * @param {"positive" | "negative"} operation Defines type of validation to check, positive checks actualIndex against limit and negative checks actualIndex against 0. 
+ * @returns {object} An object with key result where True means the element reaches limit false otherwise and element which contain the element evaluated.
+ */
 function limitReached(element, actualIndex, limit, operation = "positive"){
     calcs = {
         "negative": (actualIndex === 0),
         "positive": (actualIndex === limit),
     };
-    console.log(`${operation}: ${actualIndex} - 1`);
     return {result: calcs[operation], element};
 }
 
 
+/**
+ *  Hide/Show elements and add styles to every tab based on active value.
+ * @param {NodeList} elements A node list with every HTML Element to show/hide based on active.
+ * @param {NodeList} tabs A node list with every Html Element who works as tab navigator to apply styles based on active value.
+ * @param {number} active A valid index value of the current section.
+ * @returns {void}
+ */
 function manageStep(elements, tabs, active) {
     activeWorkflow = elements[active];
     activeTab = tabs[active];
