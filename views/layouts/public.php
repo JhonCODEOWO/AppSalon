@@ -14,4 +14,5 @@
         <?php echo $content ?>
     </div>
 </body>
+<script src="/build/main.js"></script>
 </html>
