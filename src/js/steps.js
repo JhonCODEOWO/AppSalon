@@ -7,34 +7,36 @@
 
         //Global variables to manage
         // const steps = [step1, step2, step3];
-        const totalSteps = tabs.length-1;
-        let tabIndex = 0;
+        if(steps && tabs && next && prev){
+            const totalSteps = tabs.length-1;
+            let tabIndex = 0;
 
-        //Main method to manage every step and styles...
-        manageStep(steps, tabs,tabIndex);
-
-        next.addEventListener('click', () => {
-            if(tabIndex == totalSteps) return;
-            tabIndex += 1;
-            
+            //Main method to manage every step and styles...
             manageStep(steps, tabs,tabIndex);
-        });
 
-        prev.addEventListener('click', () => {
-            if(tabIndex == 0) return;
+            next.addEventListener('click', () => {
+                if(tabIndex == totalSteps) return;
+                tabIndex += 1;
+                
+                manageStep(steps, tabs,tabIndex);
+            });
 
-            tabIndex -= 1;
+            prev.addEventListener('click', () => {
+                if(tabIndex == 0) return;
 
-            manageStep(steps, tabs, tabIndex);
-        });
-
-        tabs.forEach((tabControl, index) => {
-            tabControl.addEventListener('click', (e) => {
-                tabIndex = index;
+                tabIndex -= 1;
 
                 manageStep(steps, tabs, tabIndex);
+            });
+
+            tabs.forEach((tabControl, index) => {
+                tabControl.addEventListener('click', (e) => {
+                    tabIndex = index;
+
+                    manageStep(steps, tabs, tabIndex);
+                })
             })
-        })
+        }
     })
 
     function manageStep(elements, tabs, active) {
