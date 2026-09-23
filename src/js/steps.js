@@ -9,7 +9,6 @@
         // const steps = [step1, step2, step3];
         const totalSteps = tabs.length-1;
         let tabIndex = 0;
-        console.log(steps);
 
         //Main method to manage every step and styles...
         manageStep(steps, tabs,tabIndex);
@@ -19,14 +18,22 @@
             tabIndex += 1;
             
             manageStep(steps, tabs,tabIndex);
-        })
+        });
 
         prev.addEventListener('click', () => {
             if(tabIndex == 0) return;
 
             tabIndex -= 1;
 
-            manageStep(steps, tabs,tabIndex);
+            manageStep(steps, tabs, tabIndex);
+        });
+
+        tabs.forEach((tabControl, index) => {
+            tabControl.addEventListener('click', (e) => {
+                tabIndex = index;
+
+                manageStep(steps, tabs, tabIndex);
+            })
         })
     })
 
@@ -34,13 +41,13 @@
         activeWorkflow = elements[active];
         activeTab = tabs[active];
 
-        tabs.forEach(element => {
-            if(element != active) element.classList.remove('active');
+        tabs.forEach((element, index) => {
+            if(index != active) element.classList.remove('active');
         });
 
-        elements.forEach(workflow => {
-            if(workflow != active) workflow.style.display = 'none';
-            if(workflow == active) workflow.style.display = 'block';
+        elements.forEach((workflow, index) => {
+            if(index != active) workflow.style.display = 'none';
+            if(index == active) workflow.style.display = 'block';
         })
         
         activeWorkflow.style.display = "block";
