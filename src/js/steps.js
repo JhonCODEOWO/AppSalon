@@ -1,9 +1,9 @@
     document.addEventListener('DOMContentLoaded', () => {
         //Get every HTML element necessary
-        const steps = document.querySelectorAll('.step');
-        const tabs = document.querySelectorAll('.tab');
-        const next = document.querySelector('#next');
-        const prev = document.querySelector('#previous');
+        const steps = document.querySelectorAll('#steps .step');
+        const tabs = document.querySelectorAll('#steps .tabs .tab');
+        const next = document.querySelector('#steps #next');
+        const prev = document.querySelector('#steps #previous');
 
         //Global variables to manage
         // const steps = [step1, step2, step3];
