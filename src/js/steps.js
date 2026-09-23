@@ -6,7 +6,6 @@ export function steps() {
     const prev = document.querySelector('#steps #previous');
 
     //Global variables to manage
-    // const steps = [step1, step2, step3];
     if (steps && tabs && next && prev) {
         const totalSteps = tabs.length - 1;
         let tabIndex = 0;
