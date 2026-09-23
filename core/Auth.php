@@ -88,6 +88,6 @@ class Auth {
     }
 
     public static function authenticated(): bool {
-        return isset($_SESSION['___auth']);
+        return isset($_SESSION['__auth']);
     }
 }
