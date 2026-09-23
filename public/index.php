@@ -4,6 +4,7 @@ use Controllers\AdminController;
 use Controllers\AppointmentController;
 use Controllers\AuthController;
 use Core\JustArray\JustArray;
+use Middlewares\AuthMiddleware;
 use Routes\Router;
 
 require_once __DIR__ . '/../includes/app.php';
@@ -64,7 +65,7 @@ $router->post(
 );
 
 //Basic User routes.
-$router->get("/createAppointment", [AppointmentController::class, "create"]);
+$router->get("/createAppointment", [AppointmentController::class, "create"], [AuthMiddleware::class]);
 
 //Admin routes
 $router->get("/panel", [AdminController::class, "index"]);
