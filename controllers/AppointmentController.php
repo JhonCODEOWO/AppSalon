@@ -12,8 +12,7 @@ class AppointmentController {
         view(
             "Appointments/create",
             [
-                "id" => $user->id,
-                "name" => $user->name,
+                "user" => $user,
             ],
             "layouts/public",
         );

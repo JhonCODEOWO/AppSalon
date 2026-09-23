@@ -4,13 +4,13 @@
 
 <div id="steps">
     <nav class="tabs">
-        <button type="button" data-step="1" class="tab">
+        <button type="button" class="tab">
             Servicios
         </button>
-        <button type="button" data-step="2" class="tab">
+        <button type="button" class="tab">
             Datos de la cita
         </button>
-        <button type="button" data-step="3" class="tab">
+        <button type="button" class="tab">
             Confirmación
         </button>
     </nav>
@@ -32,7 +32,7 @@
                     name="name" 
                     id="name"
                     placeholder="Tu nombre"
-                    value="<?php echo $name ?>"
+                    value="<?php echo $user->name ?? null ?>"
                     disabled
                 >
             </fieldset>
