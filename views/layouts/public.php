@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/build/main.css">
+    <script src="/build/main.js"></script>
 </head>
 <body class="h-dvh flex flex-col">
     <header class="p-3">
@@ -14,5 +15,4 @@
         <?php echo $content ?>
     </div>
 </body>
-<script src="/build/main.js"></script>
 </html>
