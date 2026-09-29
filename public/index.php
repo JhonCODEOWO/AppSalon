@@ -3,6 +3,7 @@
 use Controllers\AdminController;
 use Controllers\AppointmentController;
 use Controllers\AuthController;
+use Controllers\ServicesController;
 use Core\JustArray\JustArray;
 use Middlewares\AuthMiddleware;
 use Routes\Router;
@@ -66,6 +67,7 @@ $router->post(
 
 //Basic User routes.
 $router->get("/createAppointment", [AppointmentController::class, "create"], [AuthMiddleware::class]);
+$router->get("/api/services", [ServicesController::class, "listServices"], [AuthMiddleware::class]);
 
 //Admin routes
 $router->get("/panel", [AdminController::class, "index"]);
