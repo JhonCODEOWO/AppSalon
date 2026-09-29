@@ -18,7 +18,7 @@
     <div class="step">
         <h2>Servicios</h2>
         <p>Elige los servicios deseados.</p>
-        <div id="services"></div>
+        <div id="services" class="services"></div>
     </div>
     
     <div class="step">
@@ -73,3 +73,67 @@
         </button>
     </nav>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let services = [];
+        let loading = true;
+        showServices(loading, services);
+
+        window.App.services.getServices().then((services) => {
+            loading = false;
+            showServices(loading, services);
+        }).catch((err) => {
+            loading = false;
+            showServices(loading, `${err}`);
+        });
+
+        function showServices(loading, content){
+            const container = document.querySelector("#services");
+
+            container.innerHTML = ``;
+            if(loading) {
+                container.innerHTML = `
+                    <p>Cargando...</p>
+                `
+                return;
+            }
+
+            if (!Array.isArray(services)) {
+                container.innerHTML = `
+                    <p>
+                        ${content}
+                    </p>
+                `
+                return;
+            };
+
+            content.forEach(service => {
+                const serviceContainer = document.createElement('div');
+                serviceContainer.classList.add('service');
+
+                const serviceCheckbox = document.createElement('input');
+                serviceCheckbox.type = 'checkbox';
+                serviceCheckbox.name = 'service';
+                serviceCheckbox.value = service.id;
+
+                const serviceName = document.createElement('p');
+                const servicePrice = document.createElement('p');
+
+                serviceName.textContent = service.name;
+                servicePrice.textContent = '$' + service.price;
+
+
+                serviceName.classList.add('service__name');
+                servicePrice.classList.add('service__price');
+
+
+                serviceContainer.appendChild(serviceCheckbox);
+                serviceContainer.appendChild(serviceName);
+                serviceContainer.appendChild(servicePrice);
+
+                container.appendChild(serviceContainer);
+            });
+        }
+    })
+</script>
