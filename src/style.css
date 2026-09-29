@@ -9,8 +9,10 @@
     --color-success: #00a636;
     --color-error: #dd1313;
     --color-warning: #dfda00;
-    --color-info: #15c5e3;
+    --color-info: #0d778a;
 }
+
+@import "./css/servicesList.css";
 
 h1{
     @apply font-bold text-4xl my-2.5;
@@ -149,6 +151,8 @@ header {
         100% 100%,
         0 100%
     );
+    
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .tabs button:hover {
@@ -159,4 +163,13 @@ header {
 .tabs button.active {
     color: var(--color-background-main);
     background-color: var(--color-text-main);
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+.navigation button:disabled {
+    background-color: var(--color-content-main);
 }
