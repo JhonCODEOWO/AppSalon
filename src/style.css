@@ -88,6 +88,11 @@ input:disabled {
     color: var(--color-error)
 }
 
+.error-input-message {
+    font-size: smaller;
+    color: var(--color-error);
+}
+
 .button {
     padding: .9rem;
     border-radius: 4px;
