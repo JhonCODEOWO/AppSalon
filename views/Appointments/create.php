@@ -24,7 +24,8 @@
     <div class="step">
         <h2>Tus datos y cita.</h2>
 
-        <form action="">
+        <form>
+            <input type="hidden" name="idClient" id="idClient" value="<?php echo $user->id ?? null ?>">
             <fieldset class="input-fieldset">
                 <legend>Nombre:</legend>
                 <input 
@@ -62,6 +63,7 @@
     <div class="step">
         <h2>Resumen.</h2>
         <p>Verifica tus datos y finaliza.</p>
+        <button type="button" id="btnFinish">Agendar cita.</button>
     </div>
 
     <nav class="navigation">
@@ -76,10 +78,42 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        let services = [];
+        let services = []; //Variable to store every service from backend.
         let loading = true;
         showServices(loading, services);
 
+        const idClient = document.querySelector('#idClient');
+        const name = document.querySelector('#name');
+        const date = document.querySelector('#date');
+        const time = document.querySelector('#time');
+        const btnFinish = document.querySelector('#btnFinish');
+
+        //Form object data.
+        const form = new window.App.Validator({
+            idClient: [Number.parseInt(idClient.value) ?? null, [window.App.ValidationFunctions.required]],
+            name: [name.value ?? '', [window.App.ValidationFunctions.required]],
+            date: ["", [window.App.ValidationFunctions.required]],
+            time: [""],
+            services: [[]],
+        }, true);
+
+        date.addEventListener('change', (e) => {
+            form.date = e.currentTarget.value;
+        });
+
+        time.addEventListener('change', (e) => {
+            form.time = e.currentTarget.value;
+        });
+
+        //Send data and finish request form.
+        btnFinish.addEventListener('click', (e) =>{
+            form.validate();
+
+            console.log(form.errors);
+            return;
+        })
+
+        //Load services from backend
         window.App.services.getServices().then((services) => {
             loading = false;
             showServices(loading, services);
@@ -88,6 +122,7 @@
             showServices(loading, `${err}`);
         });
 
+        //Render every service and add needed listeners
         function showServices(loading, content){
             const container = document.querySelector("#services");
 
@@ -111,12 +146,12 @@
             content.forEach(service => {
                 const serviceContainer = document.createElement('div');
                 serviceContainer.classList.add('service');
+                serviceContainer.dataset.checked = false;
 
-                const serviceCheckbox = document.createElement('input');
-                serviceCheckbox.type = 'checkbox';
-                serviceCheckbox.name = 'service';
-                serviceCheckbox.value = service.id;
-
+                serviceContainer.onclick = ((e) => {
+                    selectService(e, service);
+                });
+                
                 const serviceName = document.createElement('p');
                 const servicePrice = document.createElement('p');
 
@@ -127,13 +162,28 @@
                 serviceName.classList.add('service__name');
                 servicePrice.classList.add('service__price');
 
-
-                serviceContainer.appendChild(serviceCheckbox);
                 serviceContainer.appendChild(serviceName);
                 serviceContainer.appendChild(servicePrice);
 
                 container.appendChild(serviceContainer);
             });
+        }
+
+        //Function to handle a HTMLElement click and add/remove every selection...
+        function selectService(e, service){
+            const element = e.currentTarget;
+            const checked = element.dataset.checked;
+            
+            if(checked === 'false') {
+                element.dataset.checked = true;
+                element.classList.add('selected');
+                form.services = [...form.services, service];
+                return;
+            };
+
+            element.dataset.checked = false;
+            element.classList.remove('selected');
+            form.services = [...form.services.filter(s => s.id != service.id)];
         }
     })
 </script>
