@@ -61,6 +61,9 @@
     </div>
 
     <div class="step">
+        <div id="errors" class="hidden">
+            <p>Ups, al parecer hay algunos errores en la información o servicios seleccionados, revisa cada apartado e intenta de nuevo.</p>
+        </div>
         <h2>Resumen.</h2>
         <p>Verifica tus datos y finaliza.</p>
         <button type="button" id="btnFinish">Agendar cita.</button>
@@ -87,30 +90,36 @@
         const date = document.querySelector('#date');
         const time = document.querySelector('#time');
         const btnFinish = document.querySelector('#btnFinish');
+        const errors = document.querySelector('#errors');
 
         //Form object data.
         const form = new window.App.Validator({
-            idClient: [Number.parseInt(idClient.value) ?? null, [window.App.ValidationFunctions.required]],
-            name: [name.value ?? '', [window.App.ValidationFunctions.required]],
-            date: ["", [window.App.ValidationFunctions.required]],
-            time: [""],
-            services: [[]],
+            idClient: [Number.parseInt(idClient.value) ?? null, [
+                [window.App.ValidationFunctions.required]
+            ]],
+            name: ['', [
+                [window.App.ValidationFunctions.required]
+            ]],
+            date: ["", [
+                [window.App.ValidationFunctions.required]
+            ]],
+            time: ["", [
+                [window.App.ValidationFunctions.required]
+            ]],
+            services: [[], [
+                [window.App.ValidationFunctions.required]
+            ]],
         }, true);
-
-        date.addEventListener('change', (e) => {
-            form.date = e.currentTarget.value;
-        });
-
-        time.addEventListener('change', (e) => {
-            form.time = e.currentTarget.value;
-        });
 
         //Send data and finish request form.
         btnFinish.addEventListener('click', (e) =>{
-            form.validate();
+            form.markAllAsTouched();
+            if(form.invalid()){
+                errors.classList.remove('hidden');
+                return;
+            };
 
-            console.log(form.errors);
-            return;
+            errors.classList.add('hidden');
         })
 
         //Load services from backend
@@ -143,13 +152,13 @@
                 return;
             };
 
-            content.forEach(service => {
+            content.forEach((service, index) => {
                 const serviceContainer = document.createElement('div');
                 serviceContainer.classList.add('service');
                 serviceContainer.dataset.checked = false;
 
                 serviceContainer.onclick = ((e) => {
-                    selectService(e, service);
+                    selectService(e, service, index);
                 });
                 
                 const serviceName = document.createElement('p');
@@ -170,20 +179,21 @@
         }
 
         //Function to handle a HTMLElement click and add/remove every selection...
-        function selectService(e, service){
+        function selectService(e, service, index){
             const element = e.currentTarget;
             const checked = element.dataset.checked;
+            let indexToDelete = null;
             
             if(checked === 'false') {
                 element.dataset.checked = true;
                 element.classList.add('selected');
-                form.services = [...form.services, service];
+                indexToDelete = form.addArrayValue('services', service, index);
                 return;
             };
 
             element.dataset.checked = false;
             element.classList.remove('selected');
-            form.services = [...form.services.filter(s => s.id != service.id)];
+            form.removeArrayValue('services', index);
         }
     })
 </script>
