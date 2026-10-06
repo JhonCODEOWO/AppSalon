@@ -1,3 +1,6 @@
+/**
+ * @todo Add support to return values based on rare input types: checkbox or select as examples.
+ */
 export class Validator {
     /**
      * A list with every input form tagname to determine how returns current values from them.
