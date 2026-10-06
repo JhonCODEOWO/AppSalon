@@ -238,7 +238,7 @@ export class Validator {
 
         const bodyElement = this.body[inputKey];
         const [elementRef, value] = bodyElement;
-        bodyElement[1] = [...value.filter((e) => e.index != indexToDelete)];
+        bodyElement[1] = [...value.filter((e) => e.id != indexToDelete)];
     }
 
     /**
