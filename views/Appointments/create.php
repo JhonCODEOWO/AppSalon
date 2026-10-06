@@ -44,6 +44,7 @@
                     type="date" 
                     name="date" 
                     id="date"
+                    min="<?php echo date('Y-m-d'); ?>"
                     placeholder="Fecha de la cita"
                 >
             </fieldset>
@@ -101,7 +102,9 @@
                 [window.App.ValidationFunctions.required]
             ]],
             date: ["", [
-                [window.App.ValidationFunctions.required]
+                [window.App.ValidationFunctions.required],
+                [onlyWeekDays],
+                [minDate, "today"]
             ]],
             time: ["", [
                 [window.App.ValidationFunctions.required]
@@ -114,6 +117,7 @@
         //Send data and finish request form.
         btnFinish.addEventListener('click', (e) =>{
             form.markAllAsTouched();
+            
             if(form.invalid()){
                 errors.classList.remove('hidden');
                 return;
@@ -194,6 +198,28 @@
             element.dataset.checked = false;
             element.classList.remove('selected');
             form.removeArrayValue('services', index);
+        }
+
+        function minDate(value, minDate) {
+            const selectedDate = new Date(`${value}T00:00:00`);
+
+            const min = minDate === "today"
+                ? new Date().setHours(0, 0, 0, 0)
+                : new Date(`${minDate}T00:00:00`).getTime();
+
+            const operation = selectedDate.getTime() >= min;
+
+            return [
+                operation,
+                `Please select a date on or after ${minDate}.`,
+                "minDate"
+            ];
+        }
+
+        function onlyWeekDays(value, params){
+            const utcDay = new Date(value).getUTCDay();
+            const operation = ![6,0].includes(utcDay);
+            return [operation, "You can't select weekend days.", "onlyWeekDays"];
         }
     })
 </script>
