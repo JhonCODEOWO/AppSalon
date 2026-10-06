@@ -1,5 +1,9 @@
 export class Validator {
     /**
+     * A list with every input form tagname to determine how returns current values from them.
+     */
+    tagNames = ["INPUT", "SELECT", "TEXTAREA"];
+    /**
      * Stores all form data in key/value object.
      * The structure is simple `key` is a valid HTMLElement with an unique id to register and `value` a array with a initial value
      * @example 
@@ -38,15 +42,19 @@ export class Validator {
         this.renderIn = renderIn;
 
         Object.keys(body).forEach((inputName, index) => {
-            const element = document.querySelector(`[name="${inputName}"]`);
-            if(element)
+            let element = document.querySelector(`[name="${inputName}"]`);
+
+            if(!element){
+                element = document.querySelector(`#${inputName}`);
+            }
+
+            if(element && this.tagNames.includes(element.tagName))
                 element.addEventListener('change', () => {
                     this.validate();
-                    console.log('change');
                 });
 
-            // if(!element) 
-            //     throw new Error(`Validator: The input key ${inputName} declared on constructor doesn't exists as input with a name related`);
+            if(!element) 
+               throw new Error(`Validator: The input key ${inputName} declared on constructor doesn't exists as input or id with the key ${inputName} declared`);
             body[inputName] = [element, ...body[inputName]];
         });
 
@@ -64,24 +72,27 @@ export class Validator {
             const [elementRef, value, validationFunctions = []] = element;
             const inputName = inputKeys[index];
 
+            //Assigns the value to evaluate based on HTML Type.
+            const inputValue = this.getValue(inputName);
+
             if(validationFunctions.length === 0) return;
 
-            validationFunctions.forEach(validationFn => {
+            //Evaluate every validation function.
+            validationFunctions.forEach(validationEntry => {
                 //Fill errors if validationFn is false...
-                const [success, message, validationName] = validationFn(elementRef.value);
+                const [validationFn, params = null] = validationEntry; 
+                const [success, message, validationName] = validationFn(inputValue, params);
                 
-                if(!success) {
-                    this.addError(inputName, validationName, {
-                        element: elementRef,
-                        success,
-                        message
-                    });
-
+                if(success) {
+                    this.removeError(inputName, validationName);
                     return;
                 }
 
-
-                this.removeError(inputName, validationName);
+                this.addError(inputName, validationName, {
+                        element: elementRef,
+                        success,
+                        message
+                });
             });
         });
 
@@ -94,6 +105,29 @@ export class Validator {
     }
 
     /**
+     *  Checks if at least one error exists in the Validator object.
+     * @returns {boolean} True if form is invalid false otherwise.
+     */
+    invalid(){
+        return Object.values(this.errors)
+        .some(errors => errors.length > 0);
+    }
+
+    /**
+     *  Marks all form elements as touched and performs a validation.
+     * @returns {void}
+     */
+    markAllAsTouched(){
+        Object.keys(this.body).forEach(key => {
+            if(!Object.hasOwn(this.body, key)) return;
+            
+            const [elementRef] = this.body[key];
+        })
+
+        this.validate();
+    }
+
+    /**
      *  Render the last error based on the actual error records using a inputName to select which of them should render it.
      * @param {string} A inputName key existing in errors array.
      * @returns {any}
@@ -103,16 +137,17 @@ export class Validator {
         if(!this.errors[inputName]) return;
 
         const error = parentError[0];
-        if(!error) {
+
+        if(this.errorMessagesNodes[inputName]) 
             this.errorMessagesNodes[inputName].remove();
-            return;
-        };
+
+        if(!error) return;
 
         const {message, element, success, validationName} = error;
 
         const messageNode = this.createErrorMessage(message);
-
         element.after(messageNode);
+        
         this.errorMessagesNodes[inputName] = messageNode;
     }
 
@@ -145,6 +180,7 @@ export class Validator {
      */
     removeError(inputName, validationName){
         if(!this.errors[inputName]) return;
+
         this.errors[inputName] = [
             ...this.errors[inputName].filter(error => error.validationName != validationName)
         ]
@@ -155,16 +191,76 @@ export class Validator {
         return Object.keys(this.errors);
     }
 
+    /**
+     * Creates a HTML element to render it as error.
+     * @param {string} errorContent Text to show inside the element.
+     * @returns {Node} The node created ready to use.
+     */
     createErrorMessage(errorContent){
         const errorMessage = document.createElement('p');
         errorMessage.textContent = errorContent;
         errorMessage.classList.add('error-input-message');
         return errorMessage;
     }
+
+    /**
+     * Appends a new value to the old array existing values in the field specified, it will be stored as a object with `value` and `id` keys.
+     * @param {string} inputKey A valid field registered in teh Validator constructor
+     * @param {any} valueToAdd The value that you want to append, it will be stored as value of key value.
+     * @param {string | number} id A identifier to store the value to append, ot will be the value of id. 
+     * @returns {object} The object successfully append.
+     */
+    addArrayValue(inputKey, valueToAdd, id){
+        if(!Object.hasOwn(this.body, inputKey)) return;
+
+        const bodyElement = this.body[inputKey];
+        const [elementRef, value] = bodyElement;
+
+        if(!Array.isArray(value)){
+            throw new Error(`You are trying add a value in a non controlled field.`);
+        }
+        const readyObject = {value: valueToAdd, id: id}
+        bodyElement[1] = [...value, readyObject];
+        return readyObject;
+    }
+
+    /**
+     * Removes an element from a controlled array based on its id.
+     * @param {string} inputKey A valid field of a controlled array registered in Validator constructor. 
+     * @param {string | number} indexToDelete An id of a element which you registered previously with addArrayValue() to delete.
+     * @returns {void}
+     */
+    removeArrayValue(inputKey, indexToDelete){
+        if(!Object.hasOwn(this.body, inputKey)) return;
+
+        const bodyElement = this.body[inputKey];
+        const [elementRef, value] = bodyElement;
+        bodyElement[1] = [...value.filter((e) => e.index != indexToDelete)];
+    }
+
+    /**
+     *  Get a actual value from elements registered in body property.
+     *  if a element is a input form then it returns its actual value otherwise returns actual controlled value.
+     * @param {string} inputKey A valid input key registered in Validator constructor.
+     * @returns {any} The actual value of the field.
+     * @todo Add support to different types of inputs like checkbox or selects.
+     */
+    getValue(inputKey){
+        if(!Object.hasOwn(this.body, inputKey)) return;
+
+        const bodyElement = this.body[inputKey];
+        const [elementRef, value] = bodyElement;
+
+        return this.tagNames.includes(elementRef.tagName)? elementRef.value: value; 
+    }
 }
 
 //Validation function rules.
-export function required(value){
-    const operation = value !== '' && value !== null;
+export function required(value, params){
+    const operation = value !== '' && value !== null && value.length > 0;
     return [operation, 'This field is required', 'required'];
+}
+
+export function minLength(value, minValue) {
+    const operation = value.length >= minValue;
 }
