@@ -1,7 +1,7 @@
 /**
  * @todo Add support to return values based on rare input types: checkbox or select as examples.
  */
-export class Validator {
+export class Validator extends EventTarget{
     /**
      * A list with every input form tagname to determine how returns current values from them.
      */
@@ -41,6 +41,7 @@ export class Validator {
      * })
      */
     constructor(body, renderIn = false){
+        super();
         // this.body = body;
         this.renderIn = renderIn;
 
@@ -102,7 +103,9 @@ export class Validator {
         if(this.renderIn)
             inputKeys.forEach(inputName => {
                 this.renderError(inputName);
-            })
+        });
+
+        this.successEvent();
 
         return this;
     }
@@ -255,6 +258,36 @@ export class Validator {
         const [elementRef, value] = bodyElement;
 
         return this.tagNames.includes(elementRef.tagName)? elementRef.value: value; 
+    }
+
+    /**
+     * Returns a object with all actual values in body respect to each field.
+     * @returns {object}
+     */
+    mapToPlainObject(){
+        let plainObject = {};
+        Object.keys(this.body).forEach(key => {
+            plainObject = {
+                ...plainObject,
+                [key]: this.getValue(key)
+            }
+        })
+        return plainObject;
+    }
+
+    /**
+     * Creates a event `validator-success` that is dispatched every time a validate() call is executed.
+     * @returns {void}
+     */
+    successEvent(){
+        const event = new CustomEvent('validator-success', {
+            detail: {
+                ...this.mapToPlainObject(),
+                invalid: this.invalid()
+            }
+        });
+
+        this.dispatchEvent(event);
     }
 }
 
