@@ -1,5 +1,6 @@
 /**
  * @todo Add support to return values based on rare input types: checkbox or select as examples.
+ * @todo Add a feature to validate a field specified instead of validate the entire fields.
  */
 export class Validator extends EventTarget{
     /**
