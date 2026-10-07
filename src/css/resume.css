@@ -9,9 +9,15 @@
 }
 
 .resume .item {
-    @apply text-xl
+    border: 1px solid var(--color-content-main);
+    border-radius: 1.5px;
+    @apply text-xl flex flex-col my-0.5
 }
 
 .resume .total {
-    @apply font-bold text-2xl
+    @apply font-bold text-2xl flex
+}
+
+.resume .total span {
+    color: var(--color-success);
 }
