@@ -62,12 +62,18 @@
     </div>
 
     <div class="step">
-        <div id="errors" class="hidden">
-            <p>Ups, al parecer hay algunos errores en la información o servicios seleccionados, revisa cada apartado e intenta de nuevo.</p>
+        <div id="errors" class=" text-white p-1.5 text-xl flex flex-col items-center gap-y-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="currentColor" fill-rule="evenodd" d="M14.543 2.598a2.821 2.821 0 0 0-5.086 0L1.341 18.563C.37 20.469 1.597 23 3.883 23h16.234c2.286 0 3.511-2.53 2.542-4.437zM12 8a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1m0 8.5a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0v-.5a1 1 0 0 1 1-1" clip-rule="evenodd" />
+            </svg>
+            <p>Al parecer no has llenado la información necesaria o la información que colocaste es incorrecta.</p>
+            <p class="w-full text-start">Revisa la información e intenta de nuevo.</p>
         </div>
-        <h2>Resumen.</h2>
-        <p>Verifica tus datos y finaliza.</p>
-        <button type="button" id="btnFinish">Agendar cita.</button>
+        <div id="resume" class="hidden">
+            <h2>Resumen.</h2>
+            <p>Verifica tus datos y finaliza.</p>
+        </div>
     </div>
 
     <nav class="navigation">
@@ -83,6 +89,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let services = []; //Variable to store every service from backend.
+        let prevNode = null; //It will store a reference to the last resume node to delete it previously to create an append a new one.
+        
         let loading = true;
         showServices(loading, services);
 
@@ -90,8 +98,9 @@
         const name = document.querySelector('#name');
         const date = document.querySelector('#date');
         const time = document.querySelector('#time');
-        const btnFinish = document.querySelector('#btnFinish');
+
         const errors = document.querySelector('#errors');
+        const resume = document.querySelector('#resume');
 
         //Form object data.
         const form = new window.App.Validator({
@@ -107,23 +116,30 @@
                 [minDate, "today"]
             ]],
             time: ["", [
-                [window.App.ValidationFunctions.required]
+                [window.App.ValidationFunctions.required],
+                [ableHours, '10-18'],
             ]],
             services: [[], [
                 [window.App.ValidationFunctions.required]
             ]],
         }, true);
 
-        //Send data and finish request form.
-        btnFinish.addEventListener('click', (e) =>{
-            form.markAllAsTouched();
-            
-            if(form.invalid()){
+        //Listen for validator-success event to render final form phases.
+        form.addEventListener('validator-success', ({detail}) => {
+            const {name, date, time, services, invalid} = detail;
+
+            if(invalid){
+                resume.classList.add('hidden');
                 errors.classList.remove('hidden');
                 return;
-            };
+            }
 
             errors.classList.add('hidden');
+            resume.classList.remove('hidden');
+            if(prevNode) prevNode.remove();
+            prevNode = showResume(name, date, services, time);
+
+            resume.appendChild(prevNode);
         })
 
         //Load services from backend
@@ -134,6 +150,68 @@
             loading = false;
             showServices(loading, `${err}`);
         });
+
+        /**
+         * Returns a HTMLNode with a HTML of a resume.
+         * @param {string} name
+         * @param {string} date
+         * @param {array} services
+         * @param {string} hour
+         * @returns {HTMLDivElement}
+         */
+        function showResume(name, date, services, hour){
+            const dateInstance = new Date(date);
+            const month = dateInstance.getMonth();
+            const day = dateInstance.getDate() + 2;
+            const year = dateInstance.getFullYear();
+
+            const formattedDate = new Date(Date.UTC(year, month, day)).toLocaleDateString('es-MX', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+            const resumeDiv = document.createElement('div');
+            resumeDiv.classList.add('resume');
+            resumeDiv.innerHTML = `
+                <div class="resume header">
+                    <p>${name}</p> 
+                    <p>Cita para el: ${formattedDate} a las ${hour}</p>
+                </div>
+                
+                ${services.map(s => 
+                    `<div class="resume item">
+                        <p>
+                            Servicio: ${s.value.name}
+                        </p>
+                        <p>
+                            Precio: $${s.value.price}
+                        </p>
+                    </div>`
+                ).join(' ')}
+
+                <p class="resume total">
+                    Total: <span>$${services.map(s => s.value.price).reduce((accumulator, curr) => accumulator + curr, 0)}</span>
+                </p>
+            `;
+            
+            const btnFinish = document.createElement('button');
+            btnFinish.type = 'submit';
+            btnFinish.classList.add('button', 'button-success');
+            btnFinish.textContent = 'Agendar cita';
+            
+            //Finish button action...
+            btnFinish.onclick = (e) => {
+                e.preventDefault();
+                form.markAllAsTouched();
+                console.log(form.mapToPlainObject());
+            }
+
+            resumeDiv.appendChild(btnFinish);
+
+            return resumeDiv;
+        }
 
         //Render every service and add needed listeners
         function showServices(loading, content){
@@ -192,12 +270,14 @@
                 element.dataset.checked = true;
                 element.classList.add('selected');
                 indexToDelete = form.addArrayValue('services', service, index);
+                form.validate();
                 return;
             };
 
             element.dataset.checked = false;
             element.classList.remove('selected');
             form.removeArrayValue('services', index);
+            form.validate();
         }
 
         function minDate(value, minDate) {
@@ -214,6 +294,14 @@
                 `Please select a date on or after ${minDate}.`,
                 "minDate"
             ];
+        }
+
+        function ableHours(value, ableHours){
+            const [hour, minutes] = value.split(':');
+            const [initHour, finalHour] = ableHours.split('-');
+
+            const operation = hour >= initHour && hour <= finalHour;
+            return [operation, `Select only a valid hour between: ${ableHours} hours.`];
         }
 
         function onlyWeekDays(value, params){
