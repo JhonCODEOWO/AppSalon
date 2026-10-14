@@ -14,6 +14,8 @@ class Request {
     /** Body request */
     private array $body = [];
     private array $files = [];
+    private string $contentType = "";
+    private string $accept = '';
 
     public function __construct(array $args, ?array $files)
     {
@@ -21,7 +23,12 @@ class Request {
         $this->queryParams = $args["queryParams"] ?? [];
         $this->method = $args['method'] ?? '';
         $this->body = $args["body"] ?? [];
+        $this->accept = $args["accept"] ?? '';
+        $this->contentType = $args["contentType"] ?? '';
         $this->files = $this->toUploadedFilesArray($files) ?? [];
+
+        //Replace all body data if the incoming request try to send json data (BETA).
+        if(str_contains($this->contentType, "application/json")) $this->body = inputJsonToAssoc();
     }
 
     // =========================
@@ -36,6 +43,10 @@ class Request {
     public function urlParams(): array
     {
         return $this->urlParams;
+    }
+
+    public function getAccept(): string{
+        return $this->accept;
     }
 
     // =========================
