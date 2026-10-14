@@ -23,6 +23,19 @@ export async function getServices() {
     }
 }
 
+export async function storeService(formData){
+    const url = `${apiUrl}/services`;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        body: formData
+    });
+
+    const result = await response.json();
+
+    return result;
+}
+
 export function toServiceArray(arrayJsonData){
     let services = [];
     arrayJsonData.forEach(element => {

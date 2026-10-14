@@ -1,5 +1,5 @@
 import { apiUrl, app } from "./js/app"
-import { getServices } from "./js/services";
+import { getServices, storeService } from "./js/services";
 import { required, Validator } from "./js/validator";
 import "./style.css"
 
@@ -11,7 +11,8 @@ window.App ??= {};
 
 window.App.urlApi = apiUrl;
 window.App.services = {
-    getServices: getServices
+    getServices: getServices,
+    storeService: storeService
 }
 window.App.Validator = Validator;
 window.App.ValidationFunctions = {};
