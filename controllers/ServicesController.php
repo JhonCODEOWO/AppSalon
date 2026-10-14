@@ -2,6 +2,10 @@
 
 namespace Controllers;
 
+use Core\JustArray\JustArray;
+use Core\Response;
+use Core\Validator;
+use Models\Appointment;
 use Models\Services;
 use Routes\Request;
 
@@ -14,5 +18,39 @@ class ServicesController {
         $services = Services::all();
 
         echo json_encode($services);
+    }
+
+    public function store(Request $req){
+        $body = $req->getBody();
+        $validation = new Validator($body, [
+            "estimated_date" => "required",
+            "hour" => "required",
+            "reservedBy" => "required|int|exists:users,id",
+            "services" => "required|array|inArrayType:int"
+        ]);
+
+        $errorBag = $validation->validate();
+
+        if($errorBag->hasErrors()) Response::json($errorBag->all(), 400);
+
+        $services = [];
+        
+        //Find all services requested...
+        foreach (JustArray::find($body, 'services') as $serviceID) {
+            $services[] = Services::find($serviceID);
+        }
+
+        //Prepare the instance before create a appointment
+        $appointment = new Appointment([
+            "estimated_date" => JustArray::find($body, 'estimated_date'),
+            "hour" => JustArray::find($body, 'hour'),
+            "reservedBy" => JustArray::find($body, 'reservedBy')
+        ]);
+
+        //Create appointment and relate it with every service.
+        Response::json([
+            "appointment" => get_object_vars($appointment),
+            "services" => $services
+        ], 200);
     }
 }
