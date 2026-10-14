@@ -29,7 +29,7 @@ class AuthController {
 
     public function loginUser(Request $req){
         $user = null;
-        $body = $req->getBody();
+        $body = $req->getBody(["email" => "", "password" => ""]);
         $validator = new Validator(
             $body,
             [
