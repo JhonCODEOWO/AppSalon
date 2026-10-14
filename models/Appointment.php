@@ -4,7 +4,7 @@ namespace Models;
 
 class Appointment extends ActiveRecord {
     protected static string $table = "appointments";
-    protected static array $columns = ["name", "price"];
+    protected static array $columns = ["estimated_date", "hour", "reservedBy"];
     protected static string $idName = 'id';
 
     public int $id;
@@ -14,9 +14,9 @@ class Appointment extends ActiveRecord {
 
     public function __construct(array $args = [])
     {
-        $this->id = $args['id'] ?? null;
+        $this->id = $args['id'] ?? static::$db->insert_id;
         $this->estimated_date = $args['estimated_date'] ?? "";
         $this->hour = $args['hour'] ?? '';
-        $this->reservedBy = $args['price'] ?? 0;
+        $this->reservedBy = $args['reservedBy'] ?? 0;
     }
 }
