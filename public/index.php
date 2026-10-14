@@ -68,6 +68,7 @@ $router->post(
 //Basic User routes.
 $router->get("/createAppointment", [AppointmentController::class, "create"], [AuthMiddleware::class]);
 $router->get("/api/services", [ServicesController::class, "listServices"], [AuthMiddleware::class]);
+$router->post("/api/services", [ServicesController::class, "store"], [AuthMiddleware::class]);
 
 //Admin routes
 $router->get("/panel", [AdminController::class, "index"]);
