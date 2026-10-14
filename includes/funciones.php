@@ -146,3 +146,10 @@ function error(?string $key = null): array | null | string{
 function old(?string $path): mixed{
     return Session::getPrevFlashData("old.$path");
 }
+
+function inputJsonToAssoc(): array{
+    $jsonEntry = file_get_contents("php://input");
+            
+    $decoded = json_decode($jsonEntry, true);
+    return $decoded;
+}
