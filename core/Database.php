@@ -30,5 +30,11 @@ class Database {
             include __DIR__.'/../includes/templates/error.php';
             exit;
         }
-}
+    }
+
+    public static function rollback(){
+        if(static::$db === null) return false;
+
+        return static::$db->rollback();
+    }
 }
