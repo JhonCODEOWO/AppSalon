@@ -6,6 +6,7 @@ use Core\JustArray\JustArray;
 use Core\Response;
 use Core\Validator;
 use Models\Appointment;
+use Models\AppointmentsServices;
 use Models\Services;
 use Routes\Request;
 
@@ -17,7 +18,7 @@ class ServicesController {
     public function listServices(Request $req){
         $services = Services::all();
 
-        echo json_encode($services);
+        Response::json($services, 200);
     }
 
     public function store(Request $req){
@@ -33,13 +34,6 @@ class ServicesController {
 
         if($errorBag->hasErrors()) Response::json($errorBag->all(), 400);
 
-        $services = [];
-        
-        //Find all services requested...
-        foreach (JustArray::find($body, 'services') as $serviceID) {
-            $services[] = Services::find($serviceID);
-        }
-
         //Prepare the instance before create a appointment
         $appointment = new Appointment([
             "estimated_date" => JustArray::find($body, 'estimated_date'),
@@ -47,10 +41,19 @@ class ServicesController {
             "reservedBy" => JustArray::find($body, 'reservedBy')
         ]);
 
-        //Create appointment and relate it with every service.
-        Response::json([
-            "appointment" => get_object_vars($appointment),
-            "services" => $services
-        ], 200);
+        //Create appointment and relate it with every service requested.
+        $idAppointment = $appointment->save()->id;
+
+
+        foreach (JustArray::find($body, 'services') as $serviceID) {
+            $appserv = new AppointmentsServices([
+                "appointmentId" => $idAppointment,
+                "serviceId" => $serviceID
+            ]);
+
+            $appserv->save();
+        }
+
+        Response::json(["success" => true], 200);
     }
 }
