@@ -27,7 +27,6 @@ export async function getServices() {
 export async function storeService(formData){
     const url = `${apiUrl}/services`;
 
-    try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -36,16 +35,11 @@ export async function storeService(formData){
             body: formData,
         });
 
+        if(!response.ok) throw new Error();
+
         const result = await response.json();
 
         return result;
-    } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Ooops! Something went wrong.',
-            text: "It seems your request can't be completed now, try again later."
-        });
-    }
 }
 
 export function toServiceArray(arrayJsonData){
