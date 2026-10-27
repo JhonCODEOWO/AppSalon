@@ -8,10 +8,10 @@
 </head>
 <body class="bg-black text-white">
     <div class="flex flex-col md:flex-row">
-        <div>
-            <img src="/1.jpg" alt="">
+        <div class="flex-7">
+            <img src="/1.jpg" alt="" class="md:w-full md:h-dvh">
         </div>
-        <div class="p-3">
+        <div class="p-3 flex-4">
             <?php echo $content ?>
         </div>
     </div>
