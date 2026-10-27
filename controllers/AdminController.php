@@ -5,6 +5,6 @@ namespace Controllers;
 
 class AdminController {
     public function index(){
-        view("Admin/index", [], "");
+        view("Admin/index", [], "layouts/public");
     }
 }
