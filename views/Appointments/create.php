@@ -205,7 +205,38 @@
             btnFinish.onclick = (e) => {
                 e.preventDefault();
                 form.markAllAsTouched();
-                console.log(form.mapToPlainObject());
+                
+                const formData = new FormData();
+                formData.append('estimated_date', form.getValue('date'));
+                formData.append('hour', form.getValue('time'));
+                formData.append('reservedBy', form.getValue('idClient'));
+
+                form.getValue('services').forEach(s => {
+                    formData.append('services[]', s.value.id);
+                });
+
+                if(loading) return;
+                loading = true;
+                
+                window.App.services.storeService(formData)
+                .then(response => {
+                    window.App.Swal.fire({
+                        icon: 'success',
+                        title: 'Appointment generated.',
+                        text: 'Your appointment was created successfully.'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                    loading = false;
+                })
+                .catch(() => {
+                    window.App.Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops',
+                        text: "It seems we can't handle your request, try again later."
+                    })
+                    loading = false;
+                })
             }
 
             resumeDiv.appendChild(btnFinish);
