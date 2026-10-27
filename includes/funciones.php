@@ -1,5 +1,6 @@
 <?php
 
+use Core\Auth;
 use Core\Errors;
 use Core\JustArray\JustArray;
 use Core\Session;
@@ -130,6 +131,15 @@ function contentInsideBrackets(string $string): string{
 function arrayFrom(array | null $array, string $path): mixed{
     if(!isset($array)) return null;
     return JustArray::find($array, $path);
+}
+
+/**
+ * Returns Auth classname string to use static methods in templates.
+ *
+ * @return string
+ */
+function Auth() : string{
+    return Auth::class;
 }
 
 
