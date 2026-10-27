@@ -40,17 +40,21 @@ class AuthController {
 
         $errors = $validator->validate();
 
-        if(!$errors->hasErrors()){
-            $user = Auth::attempt(
-                JustArray::find($body, 'email'),
-                JustArray::find($body, 'password')
-            );
-        }
+        if($errors->hasErrors()) redirectTo('/login');
 
-        if($user === null) {
+        $result = Auth::attempt(
+                    JustArray::find($body, 'email'),
+                    JustArray::find($body, 'password'),
+                    false,
+                    [User::class, "users", "id"],
+                );
+
+        if($result === null) {
             Session::flash("error", "The password is incorrect.");
             redirectTo("/login");
         }
+
+        $user = User::find(JustArray::find($result, "id"));
 
         if(!$this->isUserConfirmed($user) && $user != null){
             $errors->add(
@@ -66,7 +70,7 @@ class AuthController {
         Auth::login(
             [
                 "id" => $user->id,
-                "name" => $user->name,
+                "modelClassName" => User::class
             ]
         );
 
@@ -78,7 +82,8 @@ class AuthController {
     }
 
     public function logout(Request $req){
-
+        Auth::logout();
+        redirectTo('/login');
     }
 
     public function forgotPassword(){
