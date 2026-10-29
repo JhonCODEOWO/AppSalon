@@ -10,6 +10,24 @@ export class Service {
     }
 }
 
+export async function appointments(date){
+    try {
+        console.log(date);
+        const url = `${apiUrl}/appointments?dateToSearch=${date}`;
+        const response = await fetch(url, {
+            method: 'GET',
+        })
+
+        if(!response.ok) throw new Error(`Can't proceed the request, try again.`);
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 export async function getServices() {
     try {
@@ -35,7 +53,7 @@ export async function storeService(formData){
             body: formData,
         });
 
-        if(!response.ok) throw new Error();
+        if(!response.ok) throw new Error(`Can't make the request: ${response.status}`);
 
         const result = await response.json();
 
