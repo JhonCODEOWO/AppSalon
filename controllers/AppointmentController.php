@@ -23,9 +23,22 @@ class AppointmentController {
             $result = Database::execute($stmt);
 
             $appointments = [];
+            $prev = null;
+            $current = null;
 
             foreach ($result->fetch_all(MYSQLI_ASSOC) as $key => $value) {
-                $appointments[] = new AppointmentServicesDto($value);
+                    if ($prev !== $value['appointmentId']) {
+                        $current = new AppointmentServicesDto($value);
+                        $appointments[] = $current;
+
+                        $prev = $value['appointmentId'];
+                    }
+
+                    $current->setService([
+                        "id" => $value['serviceId'],
+                        "name" => $value['serviceName'],
+                        "price" => $value['servicePrice'],
+                    ]);
             }
 
             if(count($appointments) === 0) Response::json($appointments, 404);
