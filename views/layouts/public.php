@@ -21,7 +21,7 @@
                     </div>
                 </button>
                 <div class="absolute right-0 toolbox">
-                    <form action="" method="post">
+                    <form action="/logout" method="post">
                         <input type="submit" value="Cerrar sesión" class="button button-error">
                     </form>
                 </div>
