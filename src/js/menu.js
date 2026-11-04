@@ -1,6 +1,7 @@
 export class Menu {
     parent = null;
     state = false;
+    toolboxChildren = [];
     openToggleSVG = `
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path d="M0 0h24v24H0z" fill="none" />
@@ -23,8 +24,12 @@ export class Menu {
     initialize(){
         if(!this.parent) return;
 
+        this.parent.style.position = "relative";
+
         const toolbox = this.parent.querySelector('.toolbox');
+        toolbox.style.position = "absolute";
         const toggle = this.parent.querySelector('#toggle');
+        toggle.style.cursor = "pointer";
 
         const arrow = document.createElement('div');
         arrow.classList.add("arrow");
@@ -33,11 +38,17 @@ export class Menu {
         this.handleToggle(toggle);
         this.handleToolbox(toolbox);
 
+        this.toolboxChildren = toolbox.querySelectorAll(`button`);
+
         toggle.onclick = (e) => {
             this.open();
             this.handleToggle(e.currentTarget);
             this.handleToolbox(toolbox);
         }
+    }
+
+    getToolboxChildren(index){
+        return this.toolboxChildren[index] ?? null;
     }
 
     open() {
