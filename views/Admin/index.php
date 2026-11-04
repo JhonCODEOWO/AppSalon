@@ -15,9 +15,6 @@
 
 <h3>Citas</h3>
 <div id="appointments">
-    <div id="empty" class="hidden">
-        <p>No hay elementos para mostrar</p>
-    </div>
     <div id="loading">
         <p>Cargando...</p>
     </div>
@@ -51,6 +48,10 @@
             e.preventDefault();
             form.markAllAsTouched();
 
+            appointments = [];
+            if(ulElement != null) ulElement.remove();
+            loading = true;
+            handleLoading();
             getAppointments(dateInput.value);
         }
 
@@ -61,16 +62,18 @@
                 handleLoading();
                 (res != undefined)? appointments = res: appointments = [];
 
-                if(ulElement != null) ulElement.remove();
                 ulElement = handleAppointments(appointmentsDiv, appointments);
             })
             .catch((e) => {
+                loading = false;
+                handleLoading();
                 console.log(`Can't load resources ${e}`);
             });
         }
 
         function handleLoading() {
             if(loading) {
+                loadingElement.classList.remove('hidden');
                 loadingElement.classList.add('block');
                 return;
             };
@@ -80,19 +83,18 @@
         }
 
         function handleAppointments(appointmentsDiv, appointments) {
-            const empty = document.querySelector('#appointments #empty');
-            
-            if(appointments.length === 0) {
-                empty.classList.add('block');
-                empty.classList.remove('hidden');
-                return;
-            };
-
-            empty.classList.add('hidden');
-            empty.classList.remove('block');
 
             const ul = document.createElement('ul');
             ul.classList.add('appointments-list');
+            console.log(appointments.length);
+
+            if(appointments.length === 0) {
+                const nothingElement = document.createElement('p');
+                nothingElement.textContent = "No hay elementos para mostrar";
+                ul.appendChild(nothingElement);
+                appointmentsDiv.appendChild(ul);
+                return ul;
+            }
 
             appointments.forEach((a, index) => {
                 const li = document.createElement('li');
