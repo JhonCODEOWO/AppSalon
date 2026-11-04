@@ -103,6 +103,13 @@ class Validator {
 
         return true; 
     }
+
+    //Check for a valid date when $inputValue must be a date in Y-m-d format.
+    function date(mixed $inputValue, mixed $params){
+        [$separator] = explode(',', $params);
+        [$year, $month, $day] = explode($separator, $inputValue);
+        return checkdate($month, $day, $year);
+    }
     
     /**
      *  Confirms if the inputValue is the same in the param input name provided
