@@ -73,6 +73,7 @@ $router->post("/api/services", [ServicesController::class, "store"], [AuthMiddle
 //Admin routes
 $router->get("/panel", [AdminController::class, "index"]);
 $router->get("/api/appointments", [AppointmentController::class, "index"], [AuthMiddleware::class]);
+$router->post("/api/appointments/cancel/{id}", [AppointmentController::class, "cancel"], [AuthMiddleware::class]);
 
 //Handling the incoming request.
 $router->checkRoutes();
