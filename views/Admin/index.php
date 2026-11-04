@@ -86,7 +86,6 @@
 
             const ul = document.createElement('ul');
             ul.classList.add('appointments-list');
-            console.log(appointments.length);
 
             if(appointments.length === 0) {
                 const nothingElement = document.createElement('p');
@@ -138,11 +137,28 @@
                     console.log('cobrar');
                 };
                 toolbox.getToolboxChildren(1).onclick = () => {
-                    console.log('cancelar');
+                    cancelAppointment(a.appointmentId);
                 };
             });
 
             return ul;
+        }
+
+        function cancelAppointment(id){
+            window.App.services.cancelAppointment(id)
+            .then((res) => {
+                const {success} = res;
+                if(!res.success) return;
+                
+                if(ulElement != null) ulElement.remove();
+                
+                appointments = appointments.filter((a) => a.appointmentId != id);
+                
+                ulElement = handleAppointments(appointmentsDiv, appointments);
+            })
+            .catch((e) => {
+                console.log(e);
+            })
         }
     })
 </script>
