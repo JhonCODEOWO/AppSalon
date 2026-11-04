@@ -12,7 +12,6 @@ export class Service {
 
 export async function appointments(date){
     try {
-        console.log(date);
         const url = `${apiUrl}/appointments?dateToSearch=${date}`;
         const response = await fetch(url, {
             method: 'GET',
@@ -25,6 +24,24 @@ export async function appointments(date){
         return data;
     } catch (error) {
         console.log(error);
+    }
+}
+
+export async function cancelAppointment(id){
+    try {
+        const url = `${apiUrl}/appointments/cancel/${id}`;
+
+        const response = await fetch(url, {
+            method: 'POST'
+        });
+        if(!response.ok) throw new Error();
+
+        const data = await response.json();
+
+        return data;
+    } catch(error) {
+        console.error(`unexpected request error`);
+        console.info(error);
     }
 }
 
