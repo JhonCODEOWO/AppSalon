@@ -27,6 +27,13 @@ h3 {
     @apply font-semibold text-2xl my-1;
 }
 
+h4 {
+    @apply font-semibold text-xl my-1;
+}
+h5 {
+    @apply text-lg my-1;
+}
+
 .error {
     font-size: small;
     color: var(--color-error)
@@ -178,4 +185,29 @@ header {
 
 .navigation button:disabled {
     background-color: var(--color-content-main);
+}
+
+
+.appointments-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 5px 0;
+}
+
+.appointments-list li {
+    position: relative;
+    padding: 5px 20px;
+    border: 1px solid var(--color-content-main);
+}
+
+.appointments-list li .services {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    overflow-y: auto;
+}
+
+.appointments-list h4, h5{
+    text-align: center;
 }
