@@ -14,7 +14,12 @@
         </div>
 
         <?php if(Auth()::authenticated()): ?>
-            <div class="relative" id="menu">
+            <?php if(Auth()::user()->admin === true): ?>
+                <a href="/services">Servicios</a>
+                <a href="/panel">Citas</a>
+            <?php endif ?>
+            <div 
+            class="relative" id="menu">
                 <button id="toggle" class="flex items-center">
                     <div class="rounded-full bg-green-400 h-12.5 w-12.5 flex justify-center items-center">
                         <p><?php echo Auth()::user()->name[0] ?></p>
