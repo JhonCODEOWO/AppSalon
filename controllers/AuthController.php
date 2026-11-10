@@ -78,7 +78,7 @@ class AuthController {
             ?
                 redirectTo('/panel')
             :
-                redirectTo('/');
+                redirectTo('/createAppointment');
     }
 
     public function logout(Request $req){
