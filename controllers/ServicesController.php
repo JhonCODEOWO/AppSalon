@@ -7,18 +7,39 @@ use Core\Response;
 use Core\Validator;
 use Models\Appointment;
 use Models\AppointmentsServices;
-use Models\Services;
+use Models\Service;
 use Routes\Request;
 
 class ServicesController {
     public function index(){
-
+        view("admin/services", [], "layouts/public");
     }
 
     public function listServices(Request $req){
-        $services = Services::all();
+        $services = Service::all();
 
         Response::json($services, 200);
+    }
+
+    public function create(Request $req){
+        view("admin/createService", [], "layouts/public");
+    }
+
+    public function storeService(Request $req){
+        $validator = new Validator($req->getBody(), [
+            "name" => "required",
+            "price" => "required",
+        ]);
+
+        $errorBag = $validator->validate();
+
+        if($errorBag->hasErrors()) redirectTo("/services/create");
+
+        $service = new Service();
+    }
+
+    public function edit(Request $req){
+        view("admin/editService", [], "layouts/public");
     }
 
     public function store(Request $req){

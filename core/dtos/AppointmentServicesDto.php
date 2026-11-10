@@ -2,7 +2,7 @@
 
 namespace Core\Dtos;
 
-use Models\Services;
+use Models\Service;
 
 class AppointmentServicesDto {
     public int $appointmentId;
@@ -45,7 +45,7 @@ class AppointmentServicesDto {
     }
     
     public function setService(array $args){
-        $service = new Services($args);
+        $service = new Service($args);
 
         $this->services[] = $service;
     }
