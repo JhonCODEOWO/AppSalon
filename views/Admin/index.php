@@ -1,7 +1,4 @@
-<h1>Panel de administración</h1>
-<h2>Bienvenido <?php echo Auth()::user()->name ?>  </h1>
-
-<a href="/createAppointment">Crear cita</a>
+<h1>Citas</h1>
 
 <div>
     <form id="searchForm" class="flex justify-between gap-x-2">
@@ -13,7 +10,6 @@
     </form>
 </div>
 
-<h3>Citas</h3>
 <div id="appointments">
     <div id="loading">
         <p>Cargando...</p>
