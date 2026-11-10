@@ -137,7 +137,24 @@
                     console.log('cobrar');
                 };
                 toolbox.getToolboxChildren(1).onclick = () => {
-                    cancelAppointment(a.appointmentId);
+                    window.App.Swal.fire({
+                        title: 'Cancelación de cita',
+                        text: 'Estás a punto de cancelar esta cita, una vez eliminada la acción no se puede revocar',
+                        icon: 'warning',
+                        showDenyButton: true,
+                        confirmButtonText: 'Eliminar',
+                        denyButtonText: 'Cancelar',
+
+                    }).then((result) => {
+                        const {
+                            isConfirmed, isDismissed,
+                            isDenied
+                        } = result;
+
+                        if(isDenied || isDismissed) return;
+                        
+                        cancelAppointment(a.appointmentId);
+                    });
                 };
             });
 
