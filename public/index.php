@@ -5,6 +5,7 @@ use Controllers\AppointmentController;
 use Controllers\AuthController;
 use Controllers\ServicesController;
 use Core\JustArray\JustArray;
+use Middlewares\AdminMiddleware;
 use Middlewares\AuthMiddleware;
 use Routes\Router;
 
@@ -71,9 +72,9 @@ $router->get("/api/services", [ServicesController::class, "listServices"], [Auth
 $router->post("/api/services", [ServicesController::class, "store"], [AuthMiddleware::class]);
 
 //Admin routes
-$router->get("/panel", [AdminController::class, "index"]);
-$router->get("/api/appointments", [AppointmentController::class, "index"], [AuthMiddleware::class]);
-$router->post("/api/appointments/cancel/{id}", [AppointmentController::class, "cancel"], [AuthMiddleware::class]);
+$router->get("/panel", [AdminController::class, "index"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->get("/api/appointments", [AppointmentController::class, "index"], [AuthMiddleware::class, AdminController::class]);
+$router->post("/api/appointments/cancel/{id}", [AppointmentController::class, "cancel"], [AuthMiddleware::class, AdminMiddleware::class]);
 
 //Handling the incoming request.
 $router->checkRoutes();
