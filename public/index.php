@@ -76,5 +76,12 @@ $router->get("/panel", [AdminController::class, "index"], [AuthMiddleware::class
 $router->get("/api/appointments", [AppointmentController::class, "index"], [AuthMiddleware::class, AdminController::class]);
 $router->post("/api/appointments/cancel/{id}", [AppointmentController::class, "cancel"], [AuthMiddleware::class, AdminMiddleware::class]);
 
+$router->get("/services", [ServicesController::class, "index"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->get("/services/create", [ServicesController::class, "create"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->post("/services/create", [ServicesController::class, "storeService"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->get("/services/edit/{id}", [ServicesController::class, "edit"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->post("/services/update/{id}", [ServicesController::class, "update"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->post("/services/delete/{id}", [ServicesController::class, "delete"], [AuthMiddleware::class, AdminMiddleware::class]);
+
 //Handling the incoming request.
 $router->checkRoutes();
