@@ -2,7 +2,7 @@
 
 namespace Models;
 
-class Services extends ActiveRecord{
+class Service extends ActiveRecord{
     protected static string $table = 'services';
     protected static array $columns = [];
     protected static string $idName = 'id';
