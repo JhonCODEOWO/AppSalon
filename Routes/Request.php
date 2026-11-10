@@ -169,4 +169,8 @@ class Request {
         }
         return $uploadedFiles;
     }
+
+    function isJsonRequest(): bool{
+        return ($this->getAccept() === 'application/json');
+    }
 }
