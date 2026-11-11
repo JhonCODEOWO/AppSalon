@@ -46,6 +46,7 @@ class ServicesController {
 
         if($errorBag->hasErrors()) redirectTo("/services/create");
 
+        
         $service = new Service([
             "name" => JustArray::find($req->getBody(), "name"),
             "price" => JustArray::find($req->getBody(), "price"),
@@ -65,7 +66,17 @@ class ServicesController {
     }
 
     public function edit(Request $req){
-        view("admin/editService", [], "layouts/public");
+        $errorMessage = Session::getPrevFlashData("error");
+        $id = $req->getUrlParamValue("id");
+
+        $service = Service::find($id);
+
+        if($service === null) redirectTo("/services");
+        
+        view("admin/editService", [
+            "service" => $service,
+            "errorMessage" => $errorMessage,
+        ], "layouts/public");
     }
 
     public function store(Request $req){
@@ -102,5 +113,67 @@ class ServicesController {
         }
 
         Response::json(["success" => true], 200);
+    }
+
+    public function update(Request $req) {
+        $id = $req->getUrlParamValue('id');
+        $body = [
+            "id" => $id,
+            "name" => JustArray::find($req->getBody(), "name"),
+            "price" => JustArray::find( $req->getBody(), "price")
+        ];
+
+        $validator = new Validator($body, [
+            "id" => 'required|int|exists:services,id',
+            "name" => 'required',
+            "price" => 'required|float:2',
+        ]);
+
+        $errorBag = $validator->validate();
+
+        if($errorBag->hasErrors()) redirectTo("/services/edit/$id");
+
+        $service = Service::find($id);
+
+        if($service == null) {
+            Session::flash("error", "Can't update this record, try again.");
+            redirectTo("services/update/$id");
+        }
+
+        try {
+            $service->update($body);
+
+            redirectTo("/services");
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+    }
+
+    public function delete(Request $req){
+        $success = false;
+        $id = $req->getUrlParamValue("id");
+        $validator = new Validator([
+            "id" => $id
+        ],
+        [
+            "id" => "required|int|exists:services,id"
+        ]);
+
+        $errorBag = $validator->validate();
+
+        if($errorBag->hasErrors()) Response::json(["success" => $success, "errors" => $errorBag->all()], 401);
+
+        $service = Service::find($id);
+
+        try {
+            $success = $service->delete();
+
+            if($success === false)
+            Response::json(["success" => $success], 401);
+
+            Response::json(["success" => $success], 200);
+        } catch (Exception $ex) {
+            throw new Error($ex->getMessage());
+        }
     }
 }
