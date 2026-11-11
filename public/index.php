@@ -81,7 +81,7 @@ $router->get("/services/create", [ServicesController::class, "create"], [AuthMid
 $router->post("/services/create", [ServicesController::class, "storeService"], [AuthMiddleware::class, AdminMiddleware::class]);
 $router->get("/services/edit/{id}", [ServicesController::class, "edit"], [AuthMiddleware::class, AdminMiddleware::class]);
 $router->post("/services/update/{id}", [ServicesController::class, "update"], [AuthMiddleware::class, AdminMiddleware::class]);
-$router->post("/services/delete/{id}", [ServicesController::class, "delete"], [AuthMiddleware::class, AdminMiddleware::class]);
+$router->post("/api/services/delete/{id}", [ServicesController::class, "delete"], [AuthMiddleware::class, AdminMiddleware::class]);
 
 //Handling the incoming request.
 $router->checkRoutes();
