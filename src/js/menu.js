@@ -57,7 +57,6 @@ export class Menu {
 
     handleToggle(elementToggle){
         const arrow = elementToggle.querySelector(".arrow");
-        console.log(arrow);
         if(!arrow) return;
         
         (this.state)
