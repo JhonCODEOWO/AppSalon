@@ -9,6 +9,6 @@
     <h1>Confirma tu cuenta <?php echo $username ?></h1>
     <p>Para poder utilizar esta cuenta pulsa en el botón.</p>
 
-    <a href="http://localhost:8000/confirm-account/<?php echo $token ?>">Confirmar mi cuenta</a>
+    <a href="<?php echo $_ENV['APP_HOST'] ?>/confirm-account/<?php echo $token ?>">Confirmar mi cuenta</a>
 </body>
 </html>
