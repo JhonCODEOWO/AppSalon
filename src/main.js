@@ -1,6 +1,6 @@
 import { apiUrl, app } from "./js/app"
 import { Menu } from "./js/menu";
-import { appointments, cancelAppointment, getServices, storeService } from "./js/services";
+import { appointments, cancelAppointment, deleteService, getServices, storeService } from "./js/services";
 import { required, Validator } from "./js/validator";
 import "./style.css";
 import Swal from "sweetalert2";
@@ -14,6 +14,7 @@ window.App.Swal = Swal;
 window.App.urlApi = apiUrl;
 window.App.services = {
     getServices: getServices,
+    deleteService: deleteService,
     storeService: storeService,
     getAppointments: appointments,
     cancelAppointment: cancelAppointment

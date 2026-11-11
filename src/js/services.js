@@ -45,6 +45,26 @@ export async function cancelAppointment(id){
     }
 }
 
+export async function deleteService(id){
+    const url = `${apiUrl}/services/${id}`;
+    try {
+        if(id === undefined || id === null) throw new Error("the api url needs a url param.")
+
+        const response = await fetch(url, {
+            method: 'POST'
+        });
+
+        if(!response.ok) throw new Error("Request rejected by the server");
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error(`Can't proceed deleteService fetch ${error}`);
+    }
+}
+
+
 
 export async function getServices() {
     try {
