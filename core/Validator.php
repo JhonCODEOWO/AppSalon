@@ -236,6 +236,22 @@ class Validator {
         return is_int($inputValue) || filter_var($inputValue, FILTER_VALIDATE_INT) != FALSE;
     }
 
+    public function float(mixed $inputValue, mixed $params = "") {
+        $decimalCount = $params;
+        $hasDecimalCount = strlen($decimalCount) > 0;
+        $isValidFloat = is_float($inputValue) ||
+        filter_var($inputValue, FILTER_VALIDATE_FLOAT) != false;
+
+        if($isValidFloat && !$hasDecimalCount) return true;
+
+        [$integerValue, $decimals] = explode('.', $inputValue);
+
+        if($decimals === null) return false;
+        if(strlen($decimals) > $decimalCount || strlen($decimals) < $decimalCount) return false;
+        
+        return true;
+    }
+
     /**
      * Checks if every value in a array field value has the type specified.
      * 
