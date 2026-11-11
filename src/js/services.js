@@ -46,7 +46,7 @@ export async function cancelAppointment(id){
 }
 
 export async function deleteService(id){
-    const url = `${apiUrl}/services/${id}`;
+    const url = `${apiUrl}/services/delete/${id}`;
     try {
         if(id === undefined || id === null) throw new Error("the api url needs a url param.")
 
