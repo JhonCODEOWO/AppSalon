@@ -2,9 +2,13 @@
 
 namespace Controllers;
 
+use Core\Auth;
 use Core\JustArray\JustArray;
 use Core\Response;
+use Core\Session;
 use Core\Validator;
+use Error;
+use Exception;
 use Models\Appointment;
 use Models\AppointmentsServices;
 use Models\Service;
@@ -22,20 +26,42 @@ class ServicesController {
     }
 
     public function create(Request $req){
-        view("admin/createService", [], "layouts/public");
+        $errorMessage = Session::getPrevFlashData("error") ?? null;
+        view(
+            "admin/createService", 
+            [
+                "errorMessage" => $errorMessage
+            ], 
+            "layouts/public"
+        );
     }
 
     public function storeService(Request $req){
         $validator = new Validator($req->getBody(), [
             "name" => "required",
-            "price" => "required",
+            "price" => "required|float:2",
         ]);
 
         $errorBag = $validator->validate();
 
         if($errorBag->hasErrors()) redirectTo("/services/create");
 
-        $service = new Service();
+        $service = new Service([
+            "name" => JustArray::find($req->getBody(), "name"),
+            "price" => JustArray::find($req->getBody(), "price"),
+            "createdBy" => Auth::user()->id
+        ]);
+        
+        try {
+            $result = $service->save();
+            if(!$result) {
+                Session::flash("error", "The resource can't be created, try again or later.");
+                redirectTo("/services/create");
+            }
+            redirectTo("/services");
+        } catch (Exception $ex) {
+            throw new Error($ex->getMessage());
+        }
     }
 
     public function edit(Request $req){
