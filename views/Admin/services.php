@@ -1,6 +1,6 @@
 <h1>Servicios</h1>
 
-<a href="/services/create" class="button button-success">Crear servicio</a>
+<a href="/services/create" class="button button-success mb-3">Crear servicio</a>
 
 <div id="servicesContainer">
 
@@ -37,11 +37,11 @@
                 const li = document.createElement('li');
                 li.classList.add("service");
                 li.innerHTML = `
-                    <p>${s.name}</p>
-                    <p>${s.price}</p>
+                    <p class="service__name">${s.name}</p>
+                    <p class="service__price">${s.price}</p>
                     <div id=${menuName}>
                         <div id="toggle"></div>
-                        <div class="toolbox right-0">
+                        <div class="toolbox right-0 bg-neutral-900 p-4 rounded z-50 flex flex-col gap-y-2">
                             <a href="/services/edit/${s.id}">Editar</a>
                             <button class="delete-service" data-id="${s.id}">Eliminar</button>
                         </div>
