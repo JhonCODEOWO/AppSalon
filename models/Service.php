@@ -9,7 +9,7 @@ class Service extends ActiveRecord{
 
     public int | null $id;
     public string | null $name;
-    public float | null $price;
+    public string | null $price;
     public int | null $createdBy;
 
     public function __construct(array $args = [])
