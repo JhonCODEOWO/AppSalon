@@ -1,6 +1,6 @@
 <h1>Servicios</h1>
 
-<a href="/services/create" class="button button-success mb-3">Crear servicio</a>
+<a href="/services/create" class="button button-success mb-3 inline-block">Crear servicio</a>
 
 <div id="servicesContainer">
 
@@ -68,6 +68,7 @@
             nodeList.forEach((button) => {
                 button.addEventListener('click', (e) => {
                     const curr = e.currentTarget;
+                    const id = curr.dataset.id;
                     window.App.Swal.fire({
                         icon: 'warning',
                         title: 'Inhabilitar servicio',
@@ -80,7 +81,19 @@
 
                         if(isDeny || isDismissed) return;
 
-                        console.log(curr.dataset.id);
+                        window.App.services.deleteService(id)
+                        .then(res => {
+                            if(res.success === false) return;
+
+                            serviceRecords = serviceRecords.filter(s => s.id != id);
+
+                            if(ulServicesElement) ulServicesElement.remove();
+
+                            ulServicesElement = renderServices(servicesContainer, serviceRecords);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
                     });
                 })
             })
