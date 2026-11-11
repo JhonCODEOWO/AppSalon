@@ -1,4 +1,4 @@
-export class Menu {
+export class Menu extends EventTarget{
     parent = null;
     state = false;
     toolboxChildren = [];
@@ -15,6 +15,7 @@ export class Menu {
         </svg>
     `
     constructor(elementTagName){
+        super();
         this.parent = document.querySelector(elementTagName);
 
         if(!this.parent) throw new Error(`Cant find any element with ${elementTagName}`);
@@ -53,6 +54,7 @@ export class Menu {
 
     open() {
         this.state = !this.state;
+        this.clicked();
     }
 
     handleToggle(elementToggle){
@@ -69,5 +71,15 @@ export class Menu {
     handleToolbox(elementToolbox){
         elementToolbox.classList.add('hidden');
         if(this.state) elementToolbox.classList.remove('hidden');
+    }
+
+    clicked() {
+        const toggle = this.parent.querySelector('#toggle');
+        this.dispatchEvent(new CustomEvent('click', {
+            detail: {
+                state: this.state,
+                elementRef: toggle,
+            }
+        }));
     }
 }
